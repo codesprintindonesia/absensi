@@ -1,5 +1,5 @@
 // src/repositories/findLokasiKerja.repositories.js
-import { LokasiKerja } from '../models/lokasiKerja.model.js';
+import { LokasiKerja } from '../../../models/lokasiKerja.model.js';
 
 /**
  * Find lokasi kerja by kode_referensi dan type_lokasi
@@ -18,4 +18,4 @@ const findByKodeReferensiAndType = async (kodeReferensi, typeLokasi) => {
   return location ? location.toJSON() : null;
 };
 
-export { findByKodeReferensiAndType };
+export default findByKodeReferensiAndType;

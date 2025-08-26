@@ -61,7 +61,7 @@ const LokasiKerja = sequelize.define('LokasiKerja', {
   },
   updated_at: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
     defaultValue: DataTypes.NOW,
   },
 }, {

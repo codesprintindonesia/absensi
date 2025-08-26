@@ -1,7 +1,7 @@
-// src/validations/createLokasiKerja.validations.js
+// src/validations/create.validations.js
 import Joi from 'joi';
 
-const createLokasiKerjaSchema = Joi.object({
+const createSchema = Joi.object({
   id: Joi.string()
     .length(8)
     .pattern(/^LOK-[0-9]{4}$/)
@@ -83,4 +83,4 @@ const createLokasiKerjaSchema = Joi.object({
     .optional()
 });
 
-export { createLokasiKerjaSchema };
+export { createSchema };
