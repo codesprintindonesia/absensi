@@ -10,10 +10,6 @@ const router = Router();
  * POST /lokasi-kerja
  * Create lokasi kerja baru
  */
-router.post(
-  "/",
-  validate(createSchema, "body"),
-  createController
-);
+router.post("/", validate(createSchema), createController);
 
 export default router;
