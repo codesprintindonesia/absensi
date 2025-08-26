@@ -1,8 +1,8 @@
 // src/routes/create.routes.js
 import { Router } from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
-import { createSchema } from "../../validations/master/lokasiKerja/create.validations.js";
-import createController from "../../controllers/master/lokasiKerja/create.controllers.js";
+import { createSchema } from "../../validations/master/lokasiKerja.validation.js";
+import createController from "../../controllers/master/lokasiKerja/create.controller.js";
 
 const router = Router();
 
