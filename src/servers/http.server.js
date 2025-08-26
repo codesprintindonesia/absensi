@@ -1,9 +1,8 @@
 import express from "express";
 import { config as dotenv } from "dotenv";
 import Database from "../libraries/databaseconnection.library.js";
-// import { logger } from "../configs/logger.config.js";
-import databasesRoutes from "../routes/databases.route.js";
-import lokasiKerjaRoute from '../routes/lokasiKerja.route.js';
+// import { logger } from "../configs/logger.config.js"; 
+import mainRoutes from "../routes/main.route.js";
 
 dotenv();
 
@@ -25,9 +24,8 @@ const httpPort = process.env.PORT || 3000;
 httpServer.use(express.json());
 httpServer.use(express.urlencoded({ extended: false }));
 
-// mount route
-httpServer.use("/databases", databasesRoutes);
-httpServer.use('/lokasi-kerja', lokasiKerjaRoute);
+/* routes */
+httpServer.use("/", mainRoutes); // mainRoutes diimpor dari routes/main.route.js
 
 /* contoh route */
 httpServer.get("/health", (req, res) => {

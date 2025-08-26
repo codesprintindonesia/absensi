@@ -9,14 +9,17 @@ export function validate(schema, target = "body") {
       abortEarly: false,
       allowUnknown: false,
       stripUnknown: true,
-    });
+    }); 
 
     if (error) {
       // bentuk error konsisten { code, message, data, metadata }
       const details = error.details?.map(d => d.message) || [error.message];
+      
+      console.log('Validation errors:', details);
+      
       return res.status(400).json({
         code: 400,
-        message: "Validation Error",
+        message: "Validations Error",
         data: { errors: details },
         metadata: null,
       });
