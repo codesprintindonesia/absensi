@@ -19,7 +19,7 @@ export default class Database {
    * Membaca konfigurasi dari file terenkripsi (.json.enc) atau plaintext (.json).
    * @param {string} fileConnection nama profile (mis: "development")
    */
-  async getConfigurationFromFile(fileConnection) {
+  async getConfigurationFromFile(fileConnection = "development") {
     const baseDir = path.join(__dirname, "..", "files", "databases");
     const encPath = path.join(baseDir, `${fileConnection}.json.enc`);
     const jsonPath = path.join(baseDir, `${fileConnection}.json`);
@@ -29,11 +29,15 @@ export default class Database {
       await fs.access(encPath);
       const b64 = await fs.readFile(encPath, "utf8");
       const plaintext = decryptString(b64);
+
+      console.log("PLAIN", plaintext);
+      
       JSON.parse(plaintext); // validasi JSON
       console.log(chalk.green(`Encrypted config loaded: ${encPath}`));
       return JSON.parse(plaintext);
-    } catch {
+    } catch (err) {
       // fallback ke plaintext
+      console.log("ERROR", err.message);
     }
 
     try {
@@ -42,7 +46,8 @@ export default class Database {
       JSON.parse(configData); // validasi JSON
       console.log(chalk.yellow(`WARNING: Using plaintext config: ${jsonPath}`));
       return JSON.parse(configData);
-    } catch {
+    } catch (err) {
+      console.log("ERROR 2", err.message);
       throw new Error(`Config file tidak ditemukan: ${encPath} atau ${jsonPath}`);
     }
   }

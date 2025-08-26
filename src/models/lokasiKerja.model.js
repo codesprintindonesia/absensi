@@ -1,10 +1,14 @@
-// src/models/lokasiKerja.model.js
+// src/models/lokasiKerja.models.js
 import { DataTypes } from 'sequelize';
-import sequelize from '../libraries/databaseconnection.library.js'; // pastikan file ini export { sequelize }
+import { getSequelize } from '../libraries/database.instance.js';
 
-export const TYPE_LOKASI = ['CABANG', 'DIVISI', 'UNIT_KERJA', 'CUSTOM', 'MOBILE'];
+// Define enum constants for type_lokasi
+const TYPE_LOKASI = ['CABANG', 'DIVISI', 'UNIT_KERJA', 'CUSTOM', 'MOBILE'];
 
-export const LokasiKerja = sequelize.define('LokasiKerja', {
+// Get sequelize instance
+const sequelize = await getSequelize();
+
+const LokasiKerja = sequelize.define('LokasiKerja', {
   id: {
     type: DataTypes.STRING(8),
     allowNull: false,
@@ -17,7 +21,7 @@ export const LokasiKerja = sequelize.define('LokasiKerja', {
   type_lokasi: {
     type: DataTypes.STRING(20),
     allowNull: false,
-    validate: { isIn: [TYPE_LOKASI] }, // enum mirror DB
+    validate: { isIn: [TYPE_LOKASI] },
   },
   nama: {
     type: DataTypes.STRING(100),
@@ -38,7 +42,7 @@ export const LokasiKerja = sequelize.define('LokasiKerja', {
   radius: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    defaultValue: 20, // DB default
+    defaultValue: 20,
     validate: { min: 1, max: 1000 },
   },
   is_aktif: {
@@ -53,21 +57,24 @@ export const LokasiKerja = sequelize.define('LokasiKerja', {
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+    defaultValue: DataTypes.NOW,
   },
   updated_at: {
     type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+    defaultValue: DataTypes.NOW,
   },
 }, {
   schema: 'absensi',
   tableName: 'm_lokasi_kerja',
   modelName: 'LokasiKerja',
   freezeTableName: true,
-  timestamps: false, // trigger DB handle updated_at
+  timestamps: false, // DB trigger handles updated_at
   indexes: [
     { name: 'unique_kode_referensi_type', unique: true, fields: ['kode_referensi', 'type_lokasi'] },
     { name: 'idx_lokasi_type_aktif', fields: ['type_lokasi', 'is_aktif'] },
   ],
 });
+
+// Export di akhir script sesuai coding guidelines
+export { TYPE_LOKASI, LokasiKerja };
