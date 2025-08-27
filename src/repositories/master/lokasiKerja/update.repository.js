@@ -7,26 +7,15 @@ import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
  * @param {Object} data - Data lokasi kerja
  * @returns {Object} Lokasi kerja yang dibuat
  */
-const update = async (data) => {
-  const updateLocation = await LokasiKerja.update(
-    {
-      kode_referensi: data.kode_referensi,
-      type_lokasi: data.type_lokasi,
-      nama: data.nama,
-      alamat: data.alamat,
-      latitude: data.latitude,
-      longitude: data.longitude,
-      radius: data.radius,
-      is_aktif: data.is_aktif,
-      keterangan: data.keterangan,
-    },
-    {
-      where: { id: data.id },
-    }
-  );
-
-  console.log('UPDATE RESULT', updateLocation);
-  return updateLocation;
+const update = async (id, updateData) => {
+  const [updatedRowsCount, updatedRows] = await LokasiKerja.update(updateData, {
+    where: { id },
+    returning: true,
+  });
+  if (updatedRowsCount === 0) {
+    throw new Error("Lokasi kerja tidak ditemukan");
+  }
+  return updatedRows[0].toJSON();
 };
 
 export default update;

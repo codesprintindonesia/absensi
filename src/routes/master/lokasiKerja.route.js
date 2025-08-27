@@ -10,6 +10,10 @@ import {
 import createController from "../../controllers/master/lokasiKerja/create.controller.js";
 import listController from "../../controllers/master/lokasiKerja/list.controller.js";
 import updateController from "../../controllers/master/lokasiKerja/update.controller.js";
+import getByIdController from "../../controllers/master/lokasiKerja/getById.controllers.js";
+import deleteController from '../../controllers/master/lokasiKerja/delete.controllers.js';
+import checkDeleteImpactController from '../../controllers/master/lokasiKerja/checkDeleteImpact.controllers.js';
+
 const router = Router();
 
 /**
@@ -33,5 +37,24 @@ router.put(
   validate(updateSchema),
   updateController
 );
+
+/**
+ * GET /lokasi-kerja/:id (NEW)
+ * Get lokasi kerja by ID
+ */
+router.get('/:id', validate(paramsSchema, 'params'), getByIdController);
+
+/**
+ * GET /lokasi-kerja/:id/delete-impact (NEW)
+ * Check delete impact analysis
+ */
+router.get('/:id/delete-impact', validate(paramsSchema, 'params'), checkDeleteImpactController);
+
+/**
+ * DELETE /lokasi-kerja/:id (NEW)
+ * Hard delete lokasi kerja
+ */
+router.delete('/:id', validate(paramsSchema, 'params'), deleteController);
+
 
 export default router;

@@ -1,39 +1,51 @@
 import updateRepository from '../../../repositories/master/lokasiKerja/update.repository.js';
-import findByKodeReferensiAndType from '../../../repositories/master/lokasiKerja/findByKodeReferensiAndType.repository.js';
+import findByIdRepository from '../../../repositories/master/lokasiKerja/findById.repository.js';
+import findByKodeReferensiRepository from '../../../repositories/master/lokasiKerja/findByKodeReferensi.repository.js';
 
 /**
  * Business logic untuk update lokasi kerja
- * @param {Object} data - Data lokasi kerja baru (sudah tervalidasi oleh Joi middleware)
- * @returns {Object} Lokasi kerja yang dibuat
+ * @param {string} id - ID lokasi kerja
+ * @param {Object} updateData - Data untuk diupdate (sudah tervalidasi)
+ * @param {string} updatedBy - User ID yang melakukan update
+ * @returns {Object} Data lokasi kerja yang sudah diupdate
  */
-const update = async (data) => {
-  // Business Rule 1: Check duplicate kode_referensi + type_lokasi
-  const existingLocation = await findByKodeReferensiAndType(data.kode_referensi, data.type_lokasi);
-  if (existingLocation) {
-    throw new Error('Kombinasi kode referensi dan type lokasi sudah ada');
-  } 
+const update = async (id, updateData, updatedBy = 'SYSTEM') => {
+  // Business Rule 1: Check if lokasi kerja exists
+  const existingLocation = await findByIdRepository(id);
+  if (!existingLocation) {
+    throw new Error('LOKASI_NOT_FOUND');
+  }
 
-  // Business Rule 3: Set default radius berdasarkan type lokasi
-  const getDefaultRadius = (type) => {
-    switch (type) {
-      case 'MOBILE': return 100;  // Mobile worker radius lebih besar
-      case 'CABANG': return 50;   // Cabang area sedang
-      case 'UNIT_KERJA': return 30; // Unit kerja area kecil
-      default: return 20;         // Default radius
+  // Business Rule 2: Check duplicate kode_referensi jika diubah
+  if (updateData.kode_referensi && updateData.kode_referensi !== existingLocation.kode_referensi) {
+    const duplicateKode = await findByKodeReferensiRepository(updateData.kode_referensi, id);
+    if (duplicateKode) {
+      throw new Error('KODE_REFERENSI_DUPLICATE');
     }
+  }
+
+  // Business Rule 3: Validate coordinate consistency
+  if (updateData.latitude !== undefined || updateData.longitude !== undefined) {
+    const newLatitude = updateData.latitude ?? existingLocation.latitude;
+    const newLongitude = updateData.longitude ?? existingLocation.longitude;
+    
+    // Both coordinates must be provided or both must be null
+    if ((newLatitude && !newLongitude) || (!newLatitude && newLongitude)) {
+      throw new Error('COORDINATE_INCOMPLETE');
+    }
+  }
+
+  // Add audit fields
+  const dataToUpdate = {
+    ...updateData,
+    updated_by: updatedBy,
+    updated_at: new Date()
   };
 
-  // Transform data dengan business rules
-  const locationData = {
-    ...data,
-    is_aktif: data.is_aktif !== undefined ? data.is_aktif : true,
-    radius: data.radius || getDefaultRadius(data.type_lokasi)
-  };
-
-  // Simpan ke database via repository
-  const updateLocation = await updateRepository(locationData);
+  // Update via repository
+  const updatedLocation = await updateRepository(id, dataToUpdate);
   
-  return updateLocation;
+  return updatedLocation;
 };
 
 export { update };
