@@ -7,8 +7,8 @@ import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
  * @returns {Object|null} Data lokasi kerja atau null jika tidak ditemukan
  */
 
-const findById = async (id) => {
-  const location = await LokasiKerja.findByPk(id);
+const findById = async (id, options = {}) => {
+  const location = await LokasiKerja.findByPk(id, options);
   return location ? location.toJSON() : null;
 };
 

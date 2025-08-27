@@ -10,7 +10,7 @@ const sequelize = await getSequelize();
  * @returns {Object} Status usage dengan detail
  */
 
-const checkUsage = async (lokasiKerjaId) => {
+const checkUsage = async (lokasiKerjaId, options = {}) => {
   try {
     // Check t_pegawai_lokasi_kerja (ON DELETE RESTRICT - akan error jika ada)
     const [pegawaiLokasiResults] = await sequelize.query(
@@ -22,6 +22,7 @@ const checkUsage = async (lokasiKerjaId) => {
       {
         replacements: { lokasiKerjaId },
         type: sequelize.QueryTypes.SELECT,
+        ...options,
       }
     );
 
@@ -35,6 +36,7 @@ const checkUsage = async (lokasiKerjaId) => {
       {
         replacements: { lokasiKerjaId },
         type: sequelize.QueryTypes.SELECT,
+        ...options,
       }
     );
 
@@ -47,6 +49,7 @@ const checkUsage = async (lokasiKerjaId) => {
       {
         replacements: { lokasiKerjaId },
         type: sequelize.QueryTypes.SELECT,
+        ...options,
       }
     );
 
@@ -59,6 +62,7 @@ const checkUsage = async (lokasiKerjaId) => {
       {
         replacements: { lokasiKerjaId },
         type: sequelize.QueryTypes.SELECT,
+        ...options,
       }
     );
 

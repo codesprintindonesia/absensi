@@ -7,10 +7,11 @@ import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
  * @param {Object} data - Data lokasi kerja
  * @returns {Object} Lokasi kerja yang dibuat
  */
-const update = async (id, updateData) => {
+const update = async (id, updateData, options = {}) => {
   const [updatedRowsCount, updatedRows] = await LokasiKerja.update(updateData, {
     where: { id },
     returning: true,
+    ...options,
   });
   if (updatedRowsCount === 0) {
     throw new Error("Lokasi kerja tidak ditemukan");

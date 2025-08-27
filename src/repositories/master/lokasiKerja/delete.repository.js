@@ -1,4 +1,4 @@
-import { LokasiKerja } from '../../../models/lokasiKerja.model.js';
+import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
 
 /**
  * Repository untuk hard delete lokasi kerja
@@ -6,11 +6,12 @@ import { LokasiKerja } from '../../../models/lokasiKerja.model.js';
  * @param {string} id - ID lokasi kerja
  * @returns {number} Jumlah record yang dihapus
  */
-const deleteById = async (id) => {
+const deleteById = async (id, options = {}) => {
   const deletedCount = await LokasiKerja.destroy({
-    where: { id }
+    where: { id },
+    ...options,
   });
-  
+
   return deletedCount;
 };
 
