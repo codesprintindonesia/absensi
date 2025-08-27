@@ -1,4 +1,7 @@
-import sequelize from '../../../configs/database.configs.js';
+import getSequelize from "../../../libraries/database.instance.js";
+
+// Get sequelize instance
+const sequelize = await getSequelize();
 
 /**
  * Repository untuk check apakah lokasi kerja masih digunakan
@@ -6,45 +9,58 @@ import sequelize from '../../../configs/database.configs.js';
  * @param {string} lokasiKerjaId - ID lokasi kerja
  * @returns {Object} Status usage dengan detail
  */
+
 const checkUsage = async (lokasiKerjaId) => {
   try {
     // Check t_pegawai_lokasi_kerja (ON DELETE RESTRICT - akan error jika ada)
-    const [pegawaiLokasiResults] = await sequelize.query(`
+    const [pegawaiLokasiResults] = await sequelize.query(
+      `
       SELECT COUNT(*) as count 
       FROM absensi.t_pegawai_lokasi_kerja 
       WHERE id_lokasi_kerja = :lokasiKerjaId
-    `, {
-      replacements: { lokasiKerjaId },
-      type: sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { lokasiKerjaId },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
     // Check tables yang akan di-set NULL (informational only)
-    const [absensiHarianResults] = await sequelize.query(`
+    const [absensiHarianResults] = await sequelize.query(
+      `
       SELECT COUNT(*) as count 
       FROM absensi.t_absensi_harian 
       WHERE id_lokasi_kerja_digunakan = :lokasiKerjaId
-    `, {
-      replacements: { lokasiKerjaId },
-      type: sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { lokasiKerjaId },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
-    const [logRawResults] = await sequelize.query(`
+    const [logRawResults] = await sequelize.query(
+      `
       SELECT COUNT(*) as count 
       FROM absensi.t_log_raw_absensi 
       WHERE id_lokasi_kerja = :lokasiKerjaId
-    `, {
-      replacements: { lokasiKerjaId },
-      type: sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { lokasiKerjaId },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
-    const [shiftHarianResults] = await sequelize.query(`
+    const [shiftHarianResults] = await sequelize.query(
+      `
       SELECT COUNT(*) as count 
       FROM absensi.t_shift_harian_pegawai 
       WHERE id_lokasi_kerja_aktual = :lokasiKerjaId
-    `, {
-      replacements: { lokasiKerjaId },
-      type: sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { lokasiKerjaId },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
     const pegawaiCount = parseInt(pegawaiLokasiResults.count);
     const absensiCount = parseInt(absensiHarianResults.count);
@@ -54,14 +70,14 @@ const checkUsage = async (lokasiKerjaId) => {
     return {
       canDelete: pegawaiCount === 0, // Hanya bisa delete jika tidak ada pegawai assigned
       blockingReferences: {
-        pegawai_lokasi_kerja: pegawaiCount
+        pegawai_lokasi_kerja: pegawaiCount,
       },
       affectedReferences: {
         absensi_harian: absensiCount,
         log_raw_absensi: logRawCount,
-        shift_harian_pegawai: shiftCount
+        shift_harian_pegawai: shiftCount,
       },
-      totalAffectedRecords: absensiCount + logRawCount + shiftCount
+      totalAffectedRecords: absensiCount + logRawCount + shiftCount,
     };
   } catch (error) {
     throw new Error(`Error checking lokasi kerja usage: ${error.message}`);

@@ -6,7 +6,7 @@ const router = Router();
 
 // Mount lokasi kerja routes
 router.use("/databases", databasesRoutes);
-router.use('/lokasiKerja', lokasiKerjaRoutes); 
+router.use('/lokasi-kerja', lokasiKerjaRoutes); 
 
 // Error handler middleware (harus di akhir) 
 
