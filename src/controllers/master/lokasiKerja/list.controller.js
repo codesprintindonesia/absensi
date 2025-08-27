@@ -9,7 +9,8 @@ import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
  * Get list lokasi kerja dengan filtering dan pagination
  */
 const listController = async (req, res) => {
-  try {
+  try {  
+
     const result = await list(req.query);
     
     return sendResponse(res, {
@@ -21,7 +22,7 @@ const listController = async (req, res) => {
   } catch (error) {
     console.log(error);
     return sendResponse(res, {
-      code: HTTP_STATUS.INTERNAL_SERVER_ERROR, // 500
+      code: HTTP_STATUS.INTERNAL_ERROR, // 500
       message: formatErrorMessage(error)
     });
   }

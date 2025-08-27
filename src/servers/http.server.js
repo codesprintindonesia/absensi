@@ -1,7 +1,7 @@
 import express from "express";
 import { config as dotenv } from "dotenv";
 import Database from "../libraries/databaseconnection.library.js";
-// import { logger } from "../configs/logger.config.js"; 
+// import { logger } from "../configs/logger.config.js";
 import mainRoutes from "../routes/main.route.js";
 
 dotenv();
@@ -41,7 +41,9 @@ httpServer.use((req, res) => {
 /* error handler */
 httpServer.use((err, req, res, next) => {
   //logger.error(`500 Internal Server Error: ${err.message}`);
-  res.status(500).json({ code: 500, message: err.message });
+  res
+    .status(500)
+    .json({ code: 500, message: `500 Internal Server Error: ${err.message}` });
 });
 
 export { httpServer, httpPort };

@@ -9,8 +9,9 @@ import  HTTP_STATUS from "../../../constants/httpStatus.constant.js";
  */
 const createController = async (req, res) => {
   try {
+    console.log('REQ BODY', req.body);
+
     const newLocation = await create(req.body);
-    
     return sendResponse(res, {
       code: HTTP_STATUS.CREATED, // 201
       message: 'Lokasi kerja berhasil dibuat',
