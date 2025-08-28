@@ -12,7 +12,7 @@ const baseFields = {
   alamat: Joi.string().allow(null, "").optional(),
   latitude: Joi.number().min(-90).max(90).optional(),
   longitude: Joi.number().min(-180).max(180).optional(),
-  radius: Joi.number().integer().min(1).max(1000).optional(),
+  radius: Joi.number().integer().min(1).max(1000).required(),
   is_aktif: Joi.boolean().optional(),
   keterangan: Joi.string().allow(null, "").optional(),
 };
@@ -29,7 +29,7 @@ const updateSchema = Joi.object({
 }).min(1);
 
 // LIST validation (untuk query parameters)
-const listSchema = Joi.object({
+const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
   type_lokasi: Joi.string().valid(...TYPE_LOKASI).optional(),
@@ -54,7 +54,7 @@ const headerSchema = Joi.object({
 export { 
   createSchema, 
   updateSchema, 
-  listSchema,
+  readSchema,
   paramsSchema,
   headerSchema
 };

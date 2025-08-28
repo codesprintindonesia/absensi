@@ -1,14 +1,14 @@
-// src/repositories/master/lokasiKerja/list.repository.js
+// src/repositories/master/lokasiKerja/read.repository.js
 import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
 import { Op } from "sequelize";
 
 /**
- * Repository untuk list lokasi kerja dengan filtering
+ * Repository untuk read lokasi kerja dengan filtering
  * Direct database operation only
  * @param {Object} params - params untuk query
  * @returns {Object} Result dengan rows dan count
  */
-const list = async (params, options = {}) => {
+const read = async (params, options = {}) => {
   const { page, limit, filters, orderBy } = params;
 
   // Build where clause dari filters
@@ -50,4 +50,4 @@ const list = async (params, options = {}) => {
   };
 };
 
-export default list;
+export default read;

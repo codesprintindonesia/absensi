@@ -1,17 +1,17 @@
-// src/controllers/master/lokasiKerja/list.controller.js
+// src/controllers/master/lokasiKerja/read.controller.js
 import { formatErrorMessage } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
-import { list } from '../../../services/master/lokasiKerja/list.service.js';
+import { read } from '../../../services/master/lokasiKerja/read.service.js';
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 /**
  * GET /lokasi-kerja
- * Get list lokasi kerja dengan filtering dan pagination
+ * Get read lokasi kerja dengan filtering dan pagination
  */
-const listController = async (req, res) => {
+const readController = async (req, res) => {
   try {  
 
-    const result = await list(req.query);
+    const result = await read(req.query);
     
     return sendResponse(res, {
       code: HTTP_STATUS.OK, // 200
@@ -28,4 +28,4 @@ const listController = async (req, res) => {
   }
 };
 
-export default listController;
+export default readController;

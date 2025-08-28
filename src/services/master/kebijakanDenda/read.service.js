@@ -1,10 +1,10 @@
-// src/services/master/lokasiKerja/list.service.js
-import listRepository from '../../../repositories/master/lokasiKerja/list.repository.js';
+// src/services/master/kebijakanAbsensi/list.service.js
+import listRepository from '../../../repositories/master/kebijakanAbsensi/list.repository.js';
 
 /**
- * Business logic untuk list lokasi kerja
+ * Business logic untuk list kebijakan absensi
  * @param {Object} queryParams - Query parameters (sudah tervalidasi oleh Joi middleware)
- * @returns {Object} List lokasi kerja dengan metadata pagination
+ * @returns {Object} List kebijakan absensi dengan metadata pagination
  */
 const list = async (queryParams) => {
   const { page, limit, type_lokasi, is_aktif, q } = queryParams;

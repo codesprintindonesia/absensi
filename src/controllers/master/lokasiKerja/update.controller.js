@@ -1,4 +1,4 @@
-import { formatErrorMessage } from '../../../helpers/error.helper.js';
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
 import { update } from '../../../services/master/lokasiKerja/update.service.js';
 import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
@@ -27,7 +27,7 @@ const updateController = async (req, res) => {
   } catch (error) {
     console.log(error);
     return sendResponse(res, {
-      code: HTTP_STATUS.BAD_REQUEST, // 400
+      httpCode: mapErrorToStatusCode(error), // 400
       message: formatErrorMessage(error)
     });
   }

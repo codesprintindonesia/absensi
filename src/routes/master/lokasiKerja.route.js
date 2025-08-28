@@ -3,12 +3,12 @@ import { Router } from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
 import {
   createSchema,
-  listSchema,
+  readSchema,
   paramsSchema,
   updateSchema,
 } from "../../validations/master/lokasiKerja.validation.js";
 import createController from "../../controllers/master/lokasiKerja/create.controller.js";
-import listController from "../../controllers/master/lokasiKerja/list.controller.js";
+import readController from "../../controllers/master/lokasiKerja/read.controller.js";
 import updateController from "../../controllers/master/lokasiKerja/update.controller.js";
 import getByIdController from "../../controllers/master/lokasiKerja/getById.controllers.js";
 import deleteController from '../../controllers/master/lokasiKerja/delete.controllers.js';
@@ -18,9 +18,9 @@ const router = Router();
 
 /**
  * GET /lokasi-kerja
- * Get list lokasi kerja dengan filtering dan pagination
+ * Get read lokasi kerja dengan filtering dan pagination
  */
-router.get("/", validate(listSchema), listController);
+router.get("/", validate(readSchema), readController);
 
 /**
  * POST /lokasi-kerja

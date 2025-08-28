@@ -1,6 +1,7 @@
 import updateRepository from '../../../repositories/master/lokasiKerja/update.repository.js';
 import findByIdRepository from '../../../repositories/master/lokasiKerja/findById.repository.js';
 import findByKodeReferensiRepository from '../../../repositories/master/lokasiKerja/findByKodeReferensi.repository.js';
+import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
 /**
  * Business logic untuk update lokasi kerja
@@ -13,7 +14,9 @@ const update = async (id, updateData, updatedBy = 'SYSTEM') => {
   // Business Rule 1: Check if lokasi kerja exists
   const existingLocation = await findByIdRepository(id);
   if (!existingLocation) {
-    throw new Error('LOKASI_NOT_FOUND');
+    const error = new Error('LOKASI_NOT_FOUND');
+    error.statusCode = HTTP_STATUS.NOT_FOUND; // 404
+    throw error;
   }
 
   // Business Rule 2: Check duplicate kode_referensi jika diubah
