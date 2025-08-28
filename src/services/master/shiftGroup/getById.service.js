@@ -1,10 +1,5 @@
 import findByIdRepository from '../../../repositories/master/shiftGroup/findById.repository.js';
-
-/**
- * Business logic untuk get lokasi kerja by ID
- * @param {string} id - ID lokasi kerja
- * @returns {Object} Data lokasi kerja
- */
+ 
 const getById = async (id) => {
   const location = await findByIdRepository(id);
   

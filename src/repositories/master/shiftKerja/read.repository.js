@@ -6,7 +6,7 @@ import { Op } from 'sequelize';
  * List shift kerja dengan pagination dan filter
  * @param {Object} params { page, limit, filters, orderBy }
  */
-const readRepository = async (params, options = {}) => {
+const read = async (params, options = {}) => {
   const { page, limit, filters, orderBy } = params;
 
   const where = {};
@@ -43,4 +43,4 @@ const readRepository = async (params, options = {}) => {
   };
 };
 
-export default readRepository;
+export default read;

@@ -1,68 +1,63 @@
-// src/validations/master/lokasiKerja.validation.js
-import Joi from "joi"; 
+// src/validations/master/shiftKerja.validation.js
+import Joi from 'joi';
+import { JENIS_SHIFT } from '../../models/shiftKerja.model.js';
 
-/*
-CREATE TABLE absensi.m_shift_group (
-	id varchar(8) NOT NULL,
-	nama varchar(100) NOT NULL,
-	durasi_rotasi_minggu int4 DEFAULT 1 NULL,
-	keterangan text NULL,
-	is_aktif bool DEFAULT true NULL,
-	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
-	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
-	CONSTRAINT m_shift_group_durasi_rotasi_minggu_check CHECK ((durasi_rotasi_minggu > 0)),
-	CONSTRAINT m_shift_group_pkey PRIMARY KEY (id)
-);
-
-*/
-
-// Schema dasar untuk field lokasi kerja
+// Skema id
 const idSchema = Joi.string().max(8).trim().required();
 
+// Regex jam (HH:mm:ss)
+const hhmmss = Joi.string()
+  .pattern(/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/)
+  .message('format jam harus HH:mm:ss');
+
+// Base fields
 const baseFields = {
-  nama: Joi.string().max(100).trim().required(),
-  durasi_rotasi_minggu: Joi.number().integer().min(1).optional(), // sesuai constraint durasi > 0:contentReference[oaicite:1]{index=1}
-  keterangan: Joi.string().allow(null, "").optional(),
+  kode_shift: Joi.string().max(10).trim().required(),
+  nama: Joi.string().max(50).trim().required(),
+  jam_masuk: hhmmss.required(),
+  jam_pulang: hhmmss.required(),
+  durasi_istirahat: Joi.number().integer().min(0).max(240).optional(),
+  // hari_kerja berupa array angka 1–7 atau objek JSON lain sesuai desain
+  hari_kerja: Joi.alternatives(
+    Joi.array().items(Joi.number().integer().min(1).max(7)),
+    Joi.object().unknown(true)
+  ).required(),
+  jenis_shift: Joi.string().valid(...JENIS_SHIFT).optional(),
+  is_umum: Joi.boolean().optional(),
+  toleransi_keterlambatan: Joi.number().integer().min(0).optional(),
+  keterangan: Joi.string().allow(null, '').optional(),
   is_aktif: Joi.boolean().optional(),
 };
 
-// CREATE validation
+// CREATE
 const createSchema = Joi.object({
-  ...baseFields,
   id: idSchema,
+  ...baseFields,
 });
 
-// UPDATE validation
+// UPDATE – minimal satu field harus diisi
 const updateSchema = Joi.object({
-  ...baseFields, // id ada di params
+  ...baseFields,
 }).min(1);
 
-// LIST validation (untuk query parameters)
+// READ (list)
 const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
-  limit: Joi.number().integer().min(1).max(100).default(20), 
+  limit: Joi.number().integer().min(1).max(100).default(20),
+  jenis_shift: Joi.string().valid(...JENIS_SHIFT).optional(),
+  is_umum: Joi.boolean().optional(),
   is_aktif: Joi.boolean().optional(),
-  search: Joi.string().max(100).optional().allow(''),
+  q: Joi.string().max(100).optional().allow(''),
 });
 
-// PARAMS validation (untuk :id di URL)
-const paramsSchema = Joi.object({
-  id: idSchema,
-});
+// PARAMS (:id)
+const paramsSchema = Joi.object({ id: idSchema });
 
-// HEADER validation example (jika diperlukan)
+// HEADER (opsional)
 const headerSchema = Joi.object({
   'x-client-version': Joi.string().optional(),
   'x-device-id': Joi.string().optional(),
-  'authorization': Joi.string().pattern(/^Bearer .+/).optional(),
-  // Joi akan ignore headers lain yang tidak didefinisikan
+  authorization: Joi.string().pattern(/^Bearer .+/).optional(),
 }).unknown(true);
 
-// Export semua schemas
-export { 
-  createSchema, 
-  updateSchema, 
-  readSchema,
-  paramsSchema,
-  headerSchema
-};
+export { createSchema, updateSchema, readSchema, paramsSchema, headerSchema };
