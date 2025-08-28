@@ -1,25 +1,27 @@
-// src/routes/master/kebijakanAbsensi.route.js
-import { Router } from "express";
-import { validate } from "../../middlewares/validate.middleware.js";
+import { Router } from 'express';
+import { validate } from '../../middlewares/validate.middleware.js';
 import {
   createSchema,
   readSchema,
-} from "../../validations/master/kebijakanAbsensi.validation.js";
-import createController from "../../controllers/master/kebijakanAbsensi/create.controller.js";
-import readController from "../../controllers/master/kebijakanAbsensi/read.controller.js";
+  updateSchema,
+  paramsSchema,
+} from '../../validations/master/kebijakanAbsensi.validation.js';
+import createController from '../../controllers/master/kebijakanAbsensi/create.controller.js';
+import readController from '../../controllers/master/kebijakanAbsensi/read.controller.js';
+import updateController from '../../controllers/master/kebijakanAbsensi/update.controller.js';
+import deleteController from '../../controllers/master/kebijakanAbsensi/delete.controller.js';
+import getByIdController from '../../controllers/master/kebijakanAbsensi/getById.controller.js';
 
 const router = Router();
 
-/**
- * GET /kebijakan-absensi
- * Get read lokasi kerja dengan filtering dan pagination
- */
-router.get("/", validate(readSchema), readController);
-
-/**
- * POST /kebijakan-absensi
- * Create lokasi kerja baru
- */
-router.post("/", validate(createSchema), createController);
+router.get('/', validate(readSchema), readController);
+router.post('/', validate(createSchema), createController);
+router.get('/:id', validate(paramsSchema, 'params'), getByIdController);
+router.put('/:id',
+  validate(paramsSchema, 'params'),
+  validate(updateSchema),  // pastikan minimal satu field dikirim:contentReference[oaicite:3]{index=3}
+  updateController
+);
+router.delete('/:id', validate(paramsSchema, 'params'), deleteController);
 
 export default router;

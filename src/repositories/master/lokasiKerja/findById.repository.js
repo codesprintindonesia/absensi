@@ -1,15 +1,11 @@
 import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
 
 /**
- * Repository untuk find lokasi kerja by ID
- * Direct database operation only
- * @param {string} id - ID lokasi kerja
- * @returns {Object|null} Data lokasi kerja atau null jika tidak ditemukan
+ * Cari kebijakan absensi berdasarkan ID.
  */
-
 const findById = async (id, options = {}) => {
-  const location = await LokasiKerja.findByPk(id, options);
-  return location ? location.toJSON() : null;
+  const policy = await LokasiKerja.findByPk(id, options);
+  return policy ? policy.toJSON() : null;
 };
 
-export default findById;
+export default findById;             // ← default export

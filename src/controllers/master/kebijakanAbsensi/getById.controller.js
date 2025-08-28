@@ -1,6 +1,6 @@
 import { formatErrorMessage } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
-import getById from '../../../services/master/lokasiKerja/getById.service.js';
+import  getById from '../../../services/master/kebijakanAbsensi/getById.service.js';
 import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
 /**

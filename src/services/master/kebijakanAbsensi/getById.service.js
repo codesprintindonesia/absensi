@@ -1,4 +1,4 @@
-import findByIdRepository from '../../../repositories/master/lokasiKerja/findById.repository.js';
+import findByIdRepository from '../../../repositories/master/kebijakanAbsensi/findById.repository.js';
 
 /**
  * Business logic untuk get lokasi kerja by ID
