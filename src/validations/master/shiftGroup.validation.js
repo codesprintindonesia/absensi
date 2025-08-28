@@ -1,20 +1,29 @@
 // src/validations/master/lokasiKerja.validation.js
-import Joi from "joi";
-import { TYPE_LOKASI } from "../../models/lokasiKerja.model.js";
+import Joi from "joi"; 
+
+/*
+CREATE TABLE absensi.m_shift_group (
+	id varchar(8) NOT NULL,
+	nama varchar(100) NOT NULL,
+	durasi_rotasi_minggu int4 DEFAULT 1 NULL,
+	keterangan text NULL,
+	is_aktif bool DEFAULT true NULL,
+	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	CONSTRAINT m_shift_group_durasi_rotasi_minggu_check CHECK ((durasi_rotasi_minggu > 0)),
+	CONSTRAINT m_shift_group_pkey PRIMARY KEY (id)
+);
+
+*/
 
 // Schema dasar untuk field lokasi kerja
 const idSchema = Joi.string().max(8).trim().required();
 
 const baseFields = {
-  kode_referensi: Joi.string().max(20).trim().required(),
-  type_lokasi: Joi.string().valid(...TYPE_LOKASI).required(),
   nama: Joi.string().max(100).trim().required(),
-  alamat: Joi.string().allow(null, "").optional(),
-  latitude: Joi.number().min(-90).max(90).optional(),
-  longitude: Joi.number().min(-180).max(180).optional(),
-  radius: Joi.number().integer().min(1).max(1000).required(),
-  is_aktif: Joi.boolean().optional(),
+  durasi_rotasi_minggu: Joi.number().integer().min(1).optional(), // sesuai constraint durasi > 0:contentReference[oaicite:1]{index=1}
   keterangan: Joi.string().allow(null, "").optional(),
+  is_aktif: Joi.boolean().optional(),
 };
 
 // CREATE validation
@@ -31,8 +40,7 @@ const updateSchema = Joi.object({
 // LIST validation (untuk query parameters)
 const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
-  limit: Joi.number().integer().min(1).max(100).default(20),
-  type_lokasi: Joi.string().valid(...TYPE_LOKASI).optional(),
+  limit: Joi.number().integer().min(1).max(100).default(20), 
   is_aktif: Joi.boolean().optional(),
   search: Joi.string().max(100).optional().allow(''),
 });

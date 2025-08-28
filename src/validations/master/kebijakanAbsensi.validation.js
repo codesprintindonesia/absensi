@@ -73,14 +73,12 @@ const updateSchema = Joi.object({
 // LIST (query): pagination + filter umum
 const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
-  limit: Joi.number().integer().min(1).max(100).default(20),
-
-  type_referensi: Joi.string().valid(...TYPE_REFERENSI).optional(),
+  limit: Joi.number().integer().min(1).max(100).default(20), 
   is_aktif: Joi.boolean().optional(),
   is_default: Joi.boolean().optional(),
 
   // cari by teks (nama/kode_referensi tergantung implementasi)
-  q: Joi.string().max(100).optional().allow(""),
+  search: Joi.string().max(100).optional().allow(""),
 });
 
 // PARAMS (/:id)
