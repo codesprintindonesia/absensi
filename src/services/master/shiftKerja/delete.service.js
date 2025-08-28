@@ -1,13 +1,14 @@
-import deleteRepository from '../../../repositories/master/shiftGroup/delete.repository.js';
-import findByIdRepository from '../../../repositories/master/shiftGroup/findById.repository.js';
+// src/services/master/shiftKerja/delete.service.js
+import deleteRepository from '../../../repositories/master/shiftKerja/delete.repository.js';
+import findByIdRepository from '../../../repositories/master/shiftKerja/findById.repository.js';
 import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
- 
-const deleteKebijakanAbsensi = async (id, deletedBy = 'SYSTEM') => {
+
+const deleteShiftKerja = async (id, deletedBy = 'SYSTEM') => {
   const existing = await findByIdRepository(id);
   if (!existing) {
-    const error = new Error('KEBIJAKAN_ABSENSI_NOT_FOUND');
-    error.statusCode = HTTP_STATUS.NOT_FOUND;
-    throw error;
+    const err = new Error('SHIFT_KERJA_NOT_FOUND');
+    err.statusCode = HTTP_STATUS.NOT_FOUND;
+    throw err;
   }
   const deletedCount = await deleteRepository(id);
   if (deletedCount === 0) {
@@ -20,4 +21,4 @@ const deleteKebijakanAbsensi = async (id, deletedBy = 'SYSTEM') => {
   };
 };
 
-export default deleteKebijakanAbsensi;  // ← default export
+export default deleteShiftKerja;

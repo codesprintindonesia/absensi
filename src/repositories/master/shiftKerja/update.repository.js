@@ -1,7 +1,9 @@
 // src/repositories/master/shiftKerja/update.repository.js
 import { ShiftKerja } from '../../../models/shiftKerja.model.js';
 
-const update = async (id, updateData, options = {}) => {
+const updateRepository = async (id, updateData, options = {}) => {
+
+
   const [count, rows] = await ShiftKerja.update(updateData, {
     where: { id },
     returning: true,
@@ -13,4 +15,4 @@ const update = async (id, updateData, options = {}) => {
   return rows[0].toJSON();
 };
 
-export default update;
+export default updateRepository;
