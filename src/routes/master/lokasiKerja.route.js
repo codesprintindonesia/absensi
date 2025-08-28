@@ -10,7 +10,7 @@ import {
 import createController from "../../controllers/master/lokasiKerja/create.controller.js";
 import readController from "../../controllers/master/lokasiKerja/read.controller.js";
 import updateController from "../../controllers/master/lokasiKerja/update.controller.js";
-import getByIdController from "../../controllers/master/lokasiKerja/getById.controllers.js";
+import getByIdController from "../../controllers/master/lokasiKerja/getById.controller.js";
 import deleteController from '../../controllers/master/lokasiKerja/delete.controllers.js';
 import checkDeleteImpactController from '../../controllers/master/lokasiKerja/checkDeleteImpact.controllers.js';
 

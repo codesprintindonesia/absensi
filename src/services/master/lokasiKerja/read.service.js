@@ -42,4 +42,4 @@ const read = async (queryParams) => {
   };
 };
 
-export { read };
+export default read;

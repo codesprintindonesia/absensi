@@ -1,7 +1,7 @@
 // src/controllers/master/lokasiKerja/read.controller.js
 import { formatErrorMessage } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
-import { read } from '../../../services/master/lokasiKerja/read.service.js';
+import read from '../../../services/master/lokasiKerja/read.service.js';
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 /**
@@ -10,6 +10,8 @@ import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
  */
 const readController = async (req, res) => {
   try {  
+
+    console.log("disini");
 
     const result = await read(req.query);
     
