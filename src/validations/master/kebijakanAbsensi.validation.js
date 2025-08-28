@@ -9,7 +9,7 @@ const hhmmss = Joi.string()
   .message("jam_cut_off_hari harus format HH:mm:ss");
 
 // Base fields mengikuti kolom tabel
-const baseFields = {
+const baseFields = { 
   nama: Joi.string().max(100).trim().required(),
 
   // nullable di DB → optional di validation
@@ -71,7 +71,7 @@ const updateSchema = Joi.object({
 }).min(1);
 
 // LIST (query): pagination + filter umum
-const listSchema = Joi.object({
+const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
 
@@ -96,4 +96,4 @@ const headerSchema = Joi.object({
 }).unknown(true);
 
 // Export
-export { createSchema, updateSchema, listSchema, paramsSchema, headerSchema };
+export { createSchema, updateSchema, readSchema, paramsSchema, headerSchema };

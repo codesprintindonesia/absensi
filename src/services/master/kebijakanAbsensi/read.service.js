@@ -1,19 +1,18 @@
-// src/services/master/kebijakanAbsensi/list.service.js
-import listRepository from '../../../repositories/master/kebijakanAbsensi/list.repository.js';
+// src/services/master/kebijakanAbsensi/read.service.js
+import readRepository from '../../../repositories/master/kebijakanAbsensi/read.repository.js';
 
 /**
- * Business logic untuk list kebijakan absensi
+ * Business logic untuk read kebijakan absensi
  * @param {Object} queryParams - Query parameters (sudah tervalidasi oleh Joi middleware)
  * @returns {Object} List kebijakan absensi dengan metadata pagination
  */
-const list = async (queryParams) => {
-  const { page, limit, type_lokasi, is_aktif, q } = queryParams;
+const readService = async (queryParams) => {
+  const { page, limit, is_aktif, search } = queryParams;
   
   // Build filter object
-  const filters = {};
-  if (type_lokasi) filters.type_lokasi = type_lokasi;
+  const filters = {}; 
   if (is_aktif !== undefined) filters.is_aktif = is_aktif;
-  if (q) filters.search = q; // Search akan dihandle di repository
+  if (search) filters.search = search; // Search akan dihandle di repository
   
   // Business logic: Default sorting berdasarkan created_at terbaru
   const options = {
@@ -24,7 +23,7 @@ const list = async (queryParams) => {
   };
   
   // Get data dari repository
-  const result = await listRepository(options);
+  const result = await readRepository(options);
   
   // Transform response dengan metadata pagination
   const metadata = {
@@ -42,4 +41,4 @@ const list = async (queryParams) => {
   };
 };
 
-export { list };
+export default readService;

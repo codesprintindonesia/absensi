@@ -19,8 +19,8 @@ const baseFields = {
 
 // CREATE validation
 const createSchema = Joi.object({
-  id: idSchema,
   ...baseFields,
+  id: idSchema,
 });
 
 // UPDATE validation

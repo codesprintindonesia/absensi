@@ -5,9 +5,9 @@ import { KebijakanAbsensi } from "../../../models/kebijakanAbsensi.model.js";
  * @param {Object} data - Data kebijakan absensi
  * @returns {Object} Kebijakan absensi yang dibuat
  */
-const create = async (data, options = {}) => {
+const createRepository = async (data, options = {}) => {
   const policy = await KebijakanAbsensi.create(data, options);
   return policy.toJSON();
 };
 
-export default create;
+export default createRepository;

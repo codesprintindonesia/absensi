@@ -1,5 +1,5 @@
 // src/repositories/master/kebijakanAbsensi/read.repository.js
-import { kebijakanAbsensi } from "../../../models/kebijakanAbsensi.model.js";
+import { KebijakanAbsensi } from "../../../models/kebijakanAbsensi.model.js";
 import { Op } from "sequelize";
 
 /**
@@ -8,15 +8,11 @@ import { Op } from "sequelize";
  * @param {Object} params - params untuk query
  * @returns {Object} Result dengan rows dan count
  */
-const read = async (params, options = {}) => {
+const readRepository = async (params, options = {}) => {
   const { page, limit, filters, orderBy } = params;
 
   // Build where clause dari filters
-  const where = {};
-
-  if (filters.type_lokasi) {
-    where.type_lokasi = filters.type_lokasi;
-  }
+  const where = {}; 
 
   if (filters.is_aktif !== undefined) {
     where.is_aktif = filters.is_aktif;
@@ -25,8 +21,7 @@ const read = async (params, options = {}) => {
   if (filters.search) {
     where[Op.or] = [
       { nama: { [Op.iLike]: `%${filters.search}%` } },
-      { kode_referensi: { [Op.iLike]: `%${filters.search}%` } },
-      { alamat: { [Op.iLike]: `%${filters.search}%` } },
+      { kode_referensi: { [Op.iLike]: `%${filters.search}%` } }
     ];
   }
 
@@ -34,7 +29,7 @@ const read = async (params, options = {}) => {
   const offset = (page - 1) * limit;
 
   // Execute query
-  const result = await kebijakanAbsensi.findAndCountAll(
+  const result = await KebijakanAbsensi.findAndCountAll(
     {
       where,
       limit: parseInt(limit),
@@ -50,4 +45,4 @@ const read = async (params, options = {}) => {
   };
 };
 
-export default read;
+export default readRepository;
