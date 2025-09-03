@@ -1,0 +1,27 @@
+import { Router } from 'express';
+import { validate } from '../../middlewares/validate.middleware.js';
+import {
+  createSchema,
+  updateSchema,
+  readSchema,
+  paramsSchema,
+} from '../../validations/transaction/shiftPegawai.validation.js';
+import createController from '../../controllers/transaction/shiftPegawai/create.controller.js';
+import readController from '../../controllers/transaction/shiftPegawai/read.controller.js';
+import getByIdController from '../../controllers/transaction/shiftPegawai/getById.controller.js';
+import updateController from '../../controllers/transaction/shiftPegawai/update.controller.js';
+import deleteController from '../../controllers/transaction/shiftPegawai/delete.controller.js';
+
+const router = Router();
+
+router.get('/', validate(readSchema), readController);
+router.post('/', validate(createSchema), createController);
+router.get('/:id', validate(paramsSchema, 'params'), getByIdController);
+router.put('/:id',
+  validate(paramsSchema, 'params'),
+  validate(updateSchema),
+  updateController
+);
+router.delete('/:id', validate(paramsSchema, 'params'), deleteController);
+
+export default router;
