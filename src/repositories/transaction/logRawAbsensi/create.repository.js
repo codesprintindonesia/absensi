@@ -3,9 +3,12 @@
 
 import { LogRawAbsensi } from '../../../models/logRawAbsensi.model.js';
 
-const create = async (data, options = {}) => {
+const createRepository = async (data, options = {}) => {
   const record = await LogRawAbsensi.create(data, options);
+  
+  console.log("Created Record:", record);
+
   return record.toJSON();
 };
 
-export default create;
+export default createRepository;

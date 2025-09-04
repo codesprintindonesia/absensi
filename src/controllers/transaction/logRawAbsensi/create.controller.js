@@ -15,6 +15,7 @@ const createController = async (req, res) => {
       data,
     });
   } catch (err) {
+    console.error('Database Error:', err.original || err); // Log detail error
     return sendResponse(res, {
       httpCode: mapErrorToStatusCode(err),
       message: formatErrorMessage(err),
