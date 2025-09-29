@@ -8,6 +8,8 @@ import shiftGroupDetailRoutes from './master/shiftGroupDetail.route.js';
 import databasesRoutes from './databases.route.js';
 import shiftPegawaiRoutes from './transaction/shiftPegawai.route.js';
 import logRawAbsensiRoutes from './transaction/logRawAbsensi.route.js';
+import jobRoutes from "./job.route.js";
+
 const router = Router();
 
 // Mount lokasi kerja routes
@@ -19,6 +21,7 @@ router.use('/shift-kerja', shiftKerjaRoutes);
 router.use('/shift-group-detail', shiftGroupDetailRoutes); 
 router.use('/shift-pegawai', shiftPegawaiRoutes);
 router.use('/log-raw-absensi', logRawAbsensiRoutes);
+router.use("/jobs", jobRoutes);
 
 // Error handler middleware (harus di akhir) 
 

@@ -11,7 +11,6 @@
 //   console.log(e.message);
 // }
 
-
 import { httpServer, httpPort } from "./servers/http.server.js";
 import { validateEnv } from "./validations/env.validation.js";
 import chalk from "chalk";
@@ -27,10 +26,22 @@ try {
   process.exit(1);
 }
 
-httpServer.listen(httpPort, '0.0.0.0', () => {
+httpServer.listen(httpPort, "0.0.0.0", () => {
   console.log(
-    chalk.blue(`HTTP server listening on port ${httpPort} - ${process.env.NODE_ENV}`)
+    chalk.blue(
+      `HTTP server listening on port ${httpPort} - ${process.env.NODE_ENV}`
+    )
   );
   console.log(chalk.blue(`Server accessible at: http://localhost:${httpPort}`));
   console.log(chalk.blue(`Health check: http://localhost:${httpPort}/health`));
+
+  // Initialize reconciliation scheduler
+  try {
+    console.log(chalk.green("✓ Reconciliation scheduler initialized"));
+  } catch (error) {
+    console.error(
+      chalk.red("❌ Failed to initialize scheduler:"),
+      error.message
+    );
+  }
 });

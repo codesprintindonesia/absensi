@@ -2,6 +2,7 @@ import express from "express";
 import { config as dotenv } from "dotenv";
 import Database from "../libraries/databaseconnection.library.js";
 // import { logger } from "../configs/logger.config.js";
+import "../models/associations.model.js";
 import mainRoutes from "../routes/main.route.js";
 
 dotenv();
@@ -35,6 +36,7 @@ httpServer.get("/health", (req, res) => {
 /* 404 handler */
 httpServer.use((req, res) => {
   //logger.warn(`404 Not Found: ${req.method} ${req.originalUrl}`);
+  console.log(`404 Not Found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({ code: 404, message: "Service Not Found" });
 });
 

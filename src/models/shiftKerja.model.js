@@ -8,7 +8,7 @@ const JENIS_SHIFT = ['NORMAL', 'ROTATING', 'CUSTOM'];
 // Dapatkan instance sequelize
 const sequelize = await getSequelize();
 
-const ShiftKerja = sequelize.define('ShiftKerja', {
+const ShiftKerja = sequelize.define('m_shift_kerja', {
   id: {
     type: DataTypes.STRING(8),
     allowNull: false,

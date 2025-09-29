@@ -9,7 +9,7 @@ const TYPE_REFERENSI = ["CABANG", "DIVISI", "UNIT_KERJA", "GLOBAL", "CUSTOM"];
 const sequelize = await getSequelize();
 
 const KebijakanAbsensi = sequelize.define(
-  "KebijakanAbsensi",
+  "m_kebijakan_absensi",
   {
     id: {
       type: DataTypes.STRING(8),
