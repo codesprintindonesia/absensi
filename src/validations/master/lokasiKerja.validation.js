@@ -1,6 +1,6 @@
 // src/validations/master/lokasiKerja.validation.js
 import Joi from "joi";
-import { TYPE_LOKASI } from "../../models/lokasiKerja.model.js";
+import { TYPE_LOKASI } from "../../models/master/lokasiKerja.model.js";
 
 // Schema dasar untuk field lokasi kerja
 const idSchema = Joi.string().max(8).trim().required();

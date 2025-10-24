@@ -1,4 +1,4 @@
-import {ShiftGroupDetail} from "../../../models/shiftGroupDetail.model.js";
+import {ShiftGroupDetail} from "../../../models/relational/shiftGroupDetail.model.js";
 
 const updateRepository = async (id, updateData, options = {}) => {
   const [updatedCount, updatedRows] = await ShiftGroupDetail.update(updateData, {

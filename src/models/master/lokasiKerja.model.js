@@ -1,6 +1,6 @@
 // src/models/lokasiKerja.models.js
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 // Define enum constants for type_lokasi
 const TYPE_LOKASI = ["CABANG", "DIVISI", "UNIT_KERJA", "CUSTOM", "MOBILE"];
@@ -54,6 +54,10 @@ const LokasiKerja = sequelize.define(
     },
     keterangan: {
       type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    cabang_induk: {
+      type: DataTypes.STRING(3),
       allowNull: true,
     },
     created_at: {

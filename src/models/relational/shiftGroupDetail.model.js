@@ -1,6 +1,6 @@
-// src/models/shiftGroupDetail.model.js
+// src//models/relational/shiftGroupDetail.model.js
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 // dapatkan instance sequelize
 const sequelize = await getSequelize();

@@ -1,4 +1,4 @@
-import { ShiftGroupDetail } from "../../../models/shiftGroupDetail.model.js";
+import { ShiftGroupDetail } from "../../../models/relational/shiftGroupDetail.model.js";
 
 const readRepository = async (params, options = {}) => {
   const { page, limit, filters, orderBy } = params;

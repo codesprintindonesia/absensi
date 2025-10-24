@@ -3,7 +3,7 @@
  * File: src/helpers/database.helper.js
  */
 
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 /**
  * Execute raw SQL query

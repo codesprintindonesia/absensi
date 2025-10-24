@@ -1,6 +1,6 @@
-// src/models/shiftKerja.model.js
+// src//models/master/shiftKerja.model.js
 import { DataTypes } from 'sequelize';
-import { getSequelize } from '../libraries/database.instance.js';
+import { getSequelize } from '../../libraries/database.instance.js';
 
 // Enum jenis shift sesuai constraint DB:contentReference[oaicite:1]{index=1}
 const JENIS_SHIFT = ['NORMAL', 'ROTATING', 'CUSTOM'];

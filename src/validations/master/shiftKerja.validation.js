@@ -1,6 +1,6 @@
 // src/validations/master/shiftKerja.validation.js
 import Joi from "joi";
-import { JENIS_SHIFT } from "../../models/shiftKerja.model.js";
+import { JENIS_SHIFT } from "../../models/master/shiftKerja.model.js";
 
 // Skema id
 const idSchema = Joi.string().max(8).trim().required();

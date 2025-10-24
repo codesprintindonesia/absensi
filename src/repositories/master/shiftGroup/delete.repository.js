@@ -1,4 +1,4 @@
-import  shiftGroup  from "../../../models/shiftGroup.model.js";
+import  shiftGroup  from "../../../models/master/shiftGroup.model.js";
 
 /**
  * Hard‑delete shift group berdasarkan ID.

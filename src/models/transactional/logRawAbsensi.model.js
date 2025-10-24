@@ -1,9 +1,9 @@
-// src/models/logRawAbsensi.model.js
+// src//models/transactional/logRawAbsensi.model.js
 // Model Sequelize untuk tabel t_log_raw_absensi.
 // Tabel ini menyimpan catatan absensi mentah dari mesin fingerprint maupun aplikasi mobile.
 
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 // Mendefinisikan model secara asynchronous karena getSequelize() mengembalikan promise
 const sequelize = await getSequelize();

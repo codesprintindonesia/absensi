@@ -1,5 +1,5 @@
 // src/repositories/master/hariLibur/findById.repository.js
-import { HariLibur } from '../../../models/hariLibur.model.js';
+import { HariLibur } from '../../../models/master/hariLibur.model.js';
 
 /**
  * Repository untuk find hari libur by tanggal (PK)

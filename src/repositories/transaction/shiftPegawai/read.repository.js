@@ -1,4 +1,4 @@
-import ShiftPegawai from '../../../models/shiftPegawai.model.js';
+import ShiftPegawai from '../../../models/relational/shiftPegawai.model.js';
 import { Op } from 'sequelize';
 
 const readRepository = async (params, options = {}) => {

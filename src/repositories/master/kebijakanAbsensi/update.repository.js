@@ -1,4 +1,4 @@
-import { KebijakanAbsensi } from "../../../models/kebijakanAbsensi.model.js";
+import { KebijakanAbsensi } from "../../../models/master/kebijakanAbsensi.model.js";
 
 /**
  * Update kebijakan absensi berdasarkan ID.

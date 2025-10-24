@@ -1,7 +1,7 @@
 // src/repositories/transaction/logRawAbsensi/read.repository.js
 // Repository untuk membaca daftar log raw absensi pada domain transaction.
 
-import { LogRawAbsensi } from "../../../models/logRawAbsensi.model.js";
+import { LogRawAbsensi } from "../../../models/transactional/logRawAbsensi.model.js";
 import { Op } from "sequelize";
 
 const read = async (params, options = {}) => {

@@ -5,10 +5,10 @@
  * Setup relationships antar models untuk enable JOIN queries
  */
 
-import { ShiftHarianPegawai } from "./shiftHarianPegawai.model.js";
-import { ShiftKerja } from "./shiftKerja.model.js";
-import { AbsensiHarian } from "./absensiHarian.model.js";
-import { LogRawAbsensi } from "./logRawAbsensi.model.js";
+import { ShiftHarianPegawai } from "./transactional/shiftHarianPegawai.model.js";
+import { ShiftKerja } from "./master/shiftKerja.model.js";
+import { AbsensiHarian } from "./transactional/absensiHarian.model.js";
+import { LogRawAbsensi } from "./transactional/logRawAbsensi.model.js";
 
 /**
  * Association untuk t_shift_harian_pegawai dengan m_shift_kerja

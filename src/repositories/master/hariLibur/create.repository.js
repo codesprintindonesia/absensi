@@ -1,5 +1,5 @@
 // src/repositories/master/hariLibur/create.repository.js
-import { HariLibur } from "../../../models/hariLibur.model.js";
+import { HariLibur } from "../../../models/master/hariLibur.model.js";
 
 /**
  * Repository untuk create hari libur

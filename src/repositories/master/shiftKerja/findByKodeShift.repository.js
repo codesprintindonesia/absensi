@@ -1,5 +1,5 @@
 // src/repositories/master/shiftKerja/findByKodeShift.repository.js
-import { ShiftKerja } from '../../../models/shiftKerja.model.js';
+import { ShiftKerja } from '../../../models/master/shiftKerja.model.js';
 import { Op } from 'sequelize';
 
 const findByKodeShift = async (kodeShift, excludeId = null, options = {}) => {

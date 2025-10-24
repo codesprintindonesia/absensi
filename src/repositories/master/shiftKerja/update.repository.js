@@ -1,5 +1,5 @@
 // src/repositories/master/shiftKerja/update.repository.js
-import { ShiftKerja } from '../../../models/shiftKerja.model.js';
+import { ShiftKerja } from '../../../models/master/shiftKerja.model.js';
 
 const updateRepository = async (id, updateData, options = {}) => {
 

@@ -1,6 +1,6 @@
 // src/models/hariLibur.model.js
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 // Define enum constants untuk jenis_libur
 const JENIS_LIBUR = ["LIBUR_NASIONAL", "CUTI_BERSAMA", "LIBUR_DAERAH"];

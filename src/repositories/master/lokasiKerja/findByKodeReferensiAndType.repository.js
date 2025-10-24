@@ -1,5 +1,5 @@
 // src/repositories/findLokasiKerja.repositories.js
-import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
+import { LokasiKerja } from "../../../models/master/lokasiKerja.model.js";
 
 /**
  * Find lokasi kerja by kode_referensi dan type_lokasi

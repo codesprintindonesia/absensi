@@ -1,6 +1,6 @@
 // src/models/absensiHarian.model.js
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 const sequelize = await getSequelize();
 

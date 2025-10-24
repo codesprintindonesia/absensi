@@ -1,4 +1,4 @@
-import ShiftPegawai from '../../../models/shiftPegawai.model.js';
+import ShiftPegawai from '../../../models/relational/shiftPegawai.model.js';
 
 const findByIdRepository = async (id, options = {}) => {
   const row = await ShiftPegawai.findByPk(id, options);

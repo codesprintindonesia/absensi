@@ -1,4 +1,4 @@
-import shiftGroup from "../../../models/shiftGroup.model.js";
+import shiftGroup from "../../../models/master/shiftGroup.model.js";
  
 const update = async (id, updateData, options = {}) => {
   const [updatedCount, updatedRows] = await shiftGroup.update(updateData, {

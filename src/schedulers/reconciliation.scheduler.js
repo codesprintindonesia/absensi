@@ -8,11 +8,11 @@ import cron from "node-cron";
 import { Op } from "sequelize";
 
 // Import models sesuai naming convention project
-import { LogRawAbsensi } from "../models/logRawAbsensi.model.js";
+import { LogRawAbsensi } from "../models/transactional/logRawAbsensi.model.js";
 import AbsensiHarian from "../models/absensiHarian.model.js";
-import ShiftHarianPegawai from "../models/shiftHarianPegawai.model.js";
-import { ShiftKerja } from "../models/shiftKerja.model.js";
-import { KebijakanAbsensi } from "../models/kebijakanAbsensi.model.js";
+import ShiftHarianPegawai from "../models/transactional/shiftHarianPegawai.model.js";
+import { ShiftKerja } from "../models/master/shiftKerja.model.js";
+import { KebijakanAbsensi } from "../models/master/kebijakanAbsensi.model.js";
 import ProsesHarian from "../models/prosesHarian.models.js";
 
 // ================================================================

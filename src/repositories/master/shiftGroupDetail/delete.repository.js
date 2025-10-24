@@ -1,4 +1,4 @@
-import {ShiftGroupDetail} from "../../../models/shiftGroupDetail.model.js";
+import {ShiftGroupDetail} from "../../../models/relational/shiftGroupDetail.model.js";
 
 const deleteRepository = async (id, options = {}) => {
   const deletedCount = await ShiftGroupDetail.destroy({

@@ -1,6 +1,6 @@
 // src/models/kebijakanAbsensi.models.js
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../libraries/database.instance.js";
+import { getSequelize } from "../../libraries/database.instance.js";
 
 // Enum untuk type_referensi (sesuai CHECK di DB)
 const TYPE_REFERENSI = ["CABANG", "DIVISI", "UNIT_KERJA", "GLOBAL", "CUSTOM"];

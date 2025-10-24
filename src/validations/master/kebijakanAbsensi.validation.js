@@ -1,6 +1,6 @@
 // src/validations/master/kebijakanAbsensi.validation.js
 import Joi from "joi"; 
-import { TYPE_REFERENSI } from "../../models/kebijakanAbsensi.model.js";
+import { TYPE_REFERENSI } from "../../models/master/kebijakanAbsensi.model.js";
 
 // Reusable pieces
 const idSchema = Joi.string().max(8).trim().required();

@@ -1,5 +1,5 @@
 // src/repositories/create.repositories.js
-import { LokasiKerja } from "../../../models/lokasiKerja.model.js";
+import { LokasiKerja } from "../../../models/master/lokasiKerja.model.js";
 
 /**
  * Repository untuk create lokasi kerja

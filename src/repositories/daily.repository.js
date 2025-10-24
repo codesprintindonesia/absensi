@@ -3,12 +3,12 @@
  * File: src/repositories/daily.repository.js
  */
 
-import { LogRawAbsensi } from "../models/logRawAbsensi.model.js";
-import { ShiftHarianPegawai } from "../models/shiftHarianPegawai.model.js";
-import { ShiftKerja } from "../models/shiftKerja.model.js";
-import { KebijakanAbsensi } from "../models/kebijakanAbsensi.model.js";
-import { AbsensiHarian } from "../models/absensiHarian.model.js";
-import { ProsesHarian } from "../models/prosesHarian.model.js";
+import { LogRawAbsensi } from "../models/transactional/logRawAbsensi.model.js";
+import { ShiftHarianPegawai } from "../models/transactional/shiftHarianPegawai.model.js";
+import { ShiftKerja } from "../models/master/shiftKerja.model.js";
+import { KebijakanAbsensi } from "../models/master/kebijakanAbsensi.model.js";
+import { AbsensiHarian } from "../models/transactional/absensiHarian.model.js";
+import { ProsesHarian } from "../models/system/prosesHarian.model.js";
 import { Op } from "sequelize";
 import { getSequelize } from "../libraries/database.instance.js";
 

@@ -1,7 +1,7 @@
 // src/repositories/transaction/logRawAbsensi/update.repository.js
 // Repository untuk memperbarui data log raw absensi.
 
-import { LogRawAbsensi } from "../../../models/logRawAbsensi.model.js";
+import { LogRawAbsensi } from "../../../models/transactional/logRawAbsensi.model.js";
 
 const update = async (id, data, options = {}) => {
   const [count, [updated]] = await LogRawAbsensi.update(data, {
