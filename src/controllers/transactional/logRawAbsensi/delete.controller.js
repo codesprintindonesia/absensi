@@ -3,7 +3,7 @@
 
 import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
-import deleteService from '../../../services/transaction/logRawAbsensi/delete.service.js';
+import deleteService from '../../../services/transactional/logRawAbsensi/delete.service.js';
 import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
 const deleteController = async (req, res) => {

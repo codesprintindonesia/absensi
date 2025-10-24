@@ -1,23 +1,22 @@
 import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
-import getById from "../../../services/relational/shiftGroupDetail/getById.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
+import createService from "../../../services/relational/pegawaiLokasiKerja/create.service.js";
 
-const getByIdController = async (req, res) => {
+const createController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const detail = await getById(id);
+    const created = await createService(req.body);
     return sendResponse(res, {
-      code: HTTP_STATUS.OK,
-      message: "Success",
-      data: detail,
+      code: HTTP_STATUS.CREATED,
+      message: "Pegawai lokasi kerja berhasil dibuat",
+      data: created,
     });
   } catch (error) {
     return sendResponse(res, {
-      httpCode: mapErrorToStatusCode(error),
+      code: mapErrorToStatusCode(error),
       message: formatErrorMessage(error),
     });
   }
 };
 
-export default getByIdController;
+export default createController;

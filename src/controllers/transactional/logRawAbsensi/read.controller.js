@@ -3,7 +3,7 @@
 
 import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
-import readService from '../../../services/transaction/logRawAbsensi/read.service.js';
+import readService from '../../../services/transactional/logRawAbsensi/read.service.js';
 import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
 const readController = async (req, res) => {

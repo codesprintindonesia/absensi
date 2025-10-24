@@ -1,6 +1,6 @@
-import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
-import readService from "../../../services/relational/shiftGroupDetail/read.service.js";
+import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
+import readService from "../../../services/relational/shiftPegawai/read.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const readController = async (req, res) => {
@@ -14,7 +14,7 @@ const readController = async (req, res) => {
     });
   } catch (error) {
     return sendResponse(res, {
-      httpCode: mapErrorToStatusCode(error),
+      code: mapErrorToStatusCode(error),
       message: formatErrorMessage(error),
     });
   }

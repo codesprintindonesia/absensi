@@ -3,7 +3,7 @@
 
 import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
-import createService from '../../../services/transaction/logRawAbsensi/create.service.js';
+import createService from '../../../services/transactional/logRawAbsensi/create.service.js';
 import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
 const createController = async (req, res) => {

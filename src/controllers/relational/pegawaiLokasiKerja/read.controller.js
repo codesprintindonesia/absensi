@@ -1,16 +1,16 @@
 import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
-import deleteService from "../../../services/relational/shiftGroupDetail/delete.service.js";
+import readService from "../../../services/relational/pegawaiLokasiKerja/read.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
-const deleteController = async (req, res) => {
+const readController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await deleteService(id);
+    const result = await readService(req.query);
     return sendResponse(res, {
-      httpCode: HTTP_STATUS.OK,
-      message: "Shift group detail berhasil dihapus",
-      data: result,
+      code: HTTP_STATUS.OK,
+      message: "OK",
+      data: result.items,
+      metadata: result.metadata,
     });
   } catch (error) {
     return sendResponse(res, {
@@ -20,4 +20,4 @@ const deleteController = async (req, res) => {
   }
 };
 
-export default deleteController;
+export default readController;

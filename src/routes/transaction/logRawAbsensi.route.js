@@ -8,7 +8,7 @@ import {
   updateSchema,
   readSchema,
   paramsSchema,
-} from '../../validations/transaction/logRawAbsensi.validation.js';
+} from '../../validations/transactional/logRawAbsensi.validation.js';
 import createController from '../../controllers/transactional/logRawAbsensi/create.controller.js';
 import readController from '../../controllers/transactional/logRawAbsensi/read.controller.js';
 import getByIdController from '../../controllers/transactional/logRawAbsensi/getById.controller.js';

@@ -1,20 +1,19 @@
-import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
-import deleteService from "../../../services/relational/shiftGroupDetail/delete.service.js";
+import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
+import deleteService from "../../../services/relational/shiftPegawai/delete.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const deleteController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await deleteService(id);
+    const result = await deleteService(req.params.id);
     return sendResponse(res, {
-      httpCode: HTTP_STATUS.OK,
-      message: "Shift group detail berhasil dihapus",
+      code: HTTP_STATUS.OK,
+      message: "Shift pegawai berhasil dihapus",
       data: result,
     });
   } catch (error) {
     return sendResponse(res, {
-      httpCode: mapErrorToStatusCode(error),
+      code: mapErrorToStatusCode(error),
       message: formatErrorMessage(error),
     });
   }

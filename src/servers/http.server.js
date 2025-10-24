@@ -1,6 +1,6 @@
 import express from "express";
 import { config as dotenv } from "dotenv";
-import Database from "../libraries/databaseconnection.library.js";
+import Database from "../libraries/databaseConnection.library.js";
 // import { logger } from "../configs/logger.config.js";
 import "../models/associations.model.js";
 import mainRoutes from "../routes/main.route.js";

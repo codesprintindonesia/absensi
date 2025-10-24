@@ -1,15 +1,15 @@
-import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
+import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
+import createService from "../../../services/relational/shiftPegawai/create.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
-import createService from "../../../services/relational/shiftGroupDetail/create.service.js";
 
 const createController = async (req, res) => {
   try {
-    const newDetail = await createService(req.body);
+    const data = await createService(req.body);
     return sendResponse(res, {
       code: HTTP_STATUS.CREATED,
-      message: "Shift group detail berhasil dibuat",
-      data: newDetail,
+      message: "Shift pegawai berhasil dibuat",
+      data,
     });
   } catch (error) {
     return sendResponse(res, {
