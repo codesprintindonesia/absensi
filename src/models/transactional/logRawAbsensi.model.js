@@ -1,24 +1,19 @@
-// src//models/transactional/logRawAbsensi.model.js
-// Model Sequelize untuk tabel t_log_raw_absensi.
-// Tabel ini menyimpan catatan absensi mentah dari mesin fingerprint maupun aplikasi mobile.
-
+// src/models/transactional/logRawAbsensi.model.js
 import { DataTypes } from "sequelize";
 import { getSequelize } from "../../libraries/database.instance.js";
 
-// Mendefinisikan model secara asynchronous karena getSequelize() mengembalikan promise
+// dapatkan instance sequelize
 const sequelize = await getSequelize();
 
-/**
- * Model LogRawAbsensi mencerminkan struktur tabel absensi.t_log_raw_absensi.
- * Beberapa kolom seperti nama_pegawai atau nama_cabang bukan bagian dari insert/update utama
- * tetapi ikut dibaca saat melakukan join atau view. Oleh karena itu kolom ini tetap didefinisikan
- * sebagai opsional.
- */
+// ENUM mirror dari CHECK constraint DB
+const SOURCE_ABSENSI = ["FINGERPRINT", "MOBILE_APP", "QR_CODE"];
+const STATUS_VALIDASI = ["VALID", "INVALID"];
+
 const LogRawAbsensi = sequelize.define(
   "LogRawAbsensi",
   {
     id: {
-      type: DataTypes.STRING(30),
+      type: DataTypes.STRING(25),
       allowNull: false,
       primaryKey: true,
     },
@@ -27,11 +22,7 @@ const LogRawAbsensi = sequelize.define(
       allowNull: false,
     },
     waktu_log: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    source_absensi: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DATE, // timestamp
       allowNull: false,
     },
     id_device: {
@@ -43,23 +34,24 @@ const LogRawAbsensi = sequelize.define(
       allowNull: true,
     },
     id_lokasi_kerja: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(8),
       allowNull: true,
     },
     is_validasi_geofence: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: false,
     },
     jarak_dari_lokasi: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     akurasi_gps: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(8, 2),
       allowNull: true,
     },
     path_bukti_foto: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: true,
     },
     qr_hash: {
@@ -71,10 +63,10 @@ const LogRawAbsensi = sequelize.define(
       allowNull: true,
     },
     status_validasi: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(15),
       allowNull: true,
-      validate: { isIn: [["VALID", "INVALID"]] },
       defaultValue: "VALID",
+      validate: { isIn: [STATUS_VALIDASI] },
     },
     created_at: {
       type: DataTypes.DATE,
@@ -86,13 +78,12 @@ const LogRawAbsensi = sequelize.define(
       allowNull: true,
       defaultValue: DataTypes.NOW,
     },
-    // Kolom informasi tambahan (tidak selalu diisi saat insert)
     nama_pegawai: {
       type: DataTypes.STRING(100),
       allowNull: true,
     },
     kode_cabang: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(5),
       allowNull: true,
     },
     nama_cabang: {
@@ -100,8 +91,15 @@ const LogRawAbsensi = sequelize.define(
       allowNull: true,
     },
     nama_jabatan_detail: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
       allowNull: true,
+    },
+    source_absensi: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      validate: { isIn: [SOURCE_ABSENSI] },
+      comment:
+        "Sumber: FINGERPRINT (mesin biometrik), MOBILE_APP (aplikasi mobile), QR_CODE (scan QR)",
     },
   },
   {
@@ -109,8 +107,26 @@ const LogRawAbsensi = sequelize.define(
     tableName: "t_log_raw_absensi",
     modelName: "LogRawAbsensi",
     freezeTableName: true,
-    timestamps: false,
+    timestamps: false, // trigger DB yang mengatur updated_at
+    indexes: [
+      // CREATE INDEX idx_log_absensi_pegawai_tanggal ON absensi.t_log_raw_absensi (id_pegawai, date(waktu_log));
+      // Catatan: gunakan literal untuk ekspresi fungsi
+      {
+        name: "idx_log_absensi_pegawai_tanggal",
+        fields: ["id_pegawai", sequelize.literal("date(waktu_log)")],
+      },
+      // CREATE INDEX idx_log_absensi_waktu ON absensi.t_log_raw_absensi (waktu_log);
+      {
+        name: "idx_log_absensi_waktu",
+        fields: ["waktu_log"],
+      },
+      // CREATE INDEX idx_log_raw_absensi_source ON absensi.t_log_raw_absensi (source_absensi);
+      {
+        name: "idx_log_raw_absensi_source",
+        fields: ["source_absensi"],
+      },
+    ],
   }
 );
 
-export { LogRawAbsensi };
+export { LogRawAbsensi, SOURCE_ABSENSI, STATUS_VALIDASI };
