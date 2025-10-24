@@ -9,11 +9,11 @@ import {
   readSchema,
   paramsSchema,
 } from '../../validations/transaction/logRawAbsensi.validation.js';
-import createController from '../../controllers/transaction/logRawAbsensi/create.controller.js';
-import readController from '../../controllers/transaction/logRawAbsensi/read.controller.js';
-import getByIdController from '../../controllers/transaction/logRawAbsensi/getById.controller.js';
-import updateController from '../../controllers/transaction/logRawAbsensi/update.controller.js';
-import deleteController from '../../controllers/transaction/logRawAbsensi/delete.controller.js';
+import createController from '../../controllers/transactional/logRawAbsensi/create.controller.js';
+import readController from '../../controllers/transactional/logRawAbsensi/read.controller.js';
+import getByIdController from '../../controllers/transactional/logRawAbsensi/getById.controller.js';
+import updateController from '../../controllers/transactional/logRawAbsensi/update.controller.js';
+import deleteController from '../../controllers/transactional/logRawAbsensi/delete.controller.js';
 
 const router = Router();
 

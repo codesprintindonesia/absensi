@@ -46,7 +46,7 @@ const ShiftGroupDetail = sequelize.define(
   },
   {
     schema: "absensi",
-    tableName: "m_shift_group_detail",
+    tableName: "r_shift_group_detail",
     modelName: "ShiftGroupDetail",
     freezeTableName: true,
     timestamps: false, // trigger DB yang mengurus updated_at

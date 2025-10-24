@@ -6,11 +6,11 @@ import {
   readSchema,
   paramsSchema,
 } from '../../validations/transaction/shiftPegawai.validation.js';
-import createController from '../../controllers/transaction/shiftPegawai/create.controller.js';
-import readController from '../../controllers/transaction/shiftPegawai/read.controller.js';
-import getByIdController from '../../controllers/transaction/shiftPegawai/getById.controller.js';
-import updateController from '../../controllers/transaction/shiftPegawai/update.controller.js';
-import deleteController from '../../controllers/transaction/shiftPegawai/delete.controller.js';
+import createController from '../../controllers/transactional/shiftPegawai/create.controller.js';
+import readController from '../../controllers/transactional/shiftPegawai/read.controller.js';
+import getByIdController from '../../controllers/transactional/shiftPegawai/getById.controller.js';
+import updateController from '../../controllers/transactional/shiftPegawai/update.controller.js';
+import deleteController from '../../controllers/transactional/shiftPegawai/delete.controller.js';
 
 const router = Router();
 

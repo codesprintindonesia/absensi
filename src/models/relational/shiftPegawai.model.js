@@ -71,7 +71,7 @@ const ShiftPegawai = sequelize.define(
   },
   {
     schema: "absensi",
-    tableName: "t_shift_pegawai",
+    tableName: "r_shift_pegawai",
     modelName: "ShiftPegawai",
     freezeTableName: true,
     timestamps: false,

@@ -6,11 +6,11 @@ import {
   readSchema,
   paramsSchema,
 } from "../../validations/master/shiftGroupDetail.validation.js";
-import createController from "../../controllers/master/shiftGroupDetail/create.controller.js";
-import readController from "../../controllers/master/shiftGroupDetail/read.controller.js";
-import getByIdController from "../../controllers/master/shiftGroupDetail/getById.controller.js";
-import updateController from "../../controllers/master/shiftGroupDetail/update.controller.js";
-import deleteController from "../../controllers/master/shiftGroupDetail/delete.controller.js";
+import createController from "../../controllers/relational/shiftGroupDetail/create.controller.js";
+import readController from "../../controllers/relational/shiftGroupDetail/read.controller.js";
+import getByIdController from "../../controllers/relational/shiftGroupDetail/getById.controller.js";
+import updateController from "../../controllers/relational/shiftGroupDetail/update.controller.js";
+import deleteController from "../../controllers/relational/shiftGroupDetail/delete.controller.js";
 
 const router = Router();
 
