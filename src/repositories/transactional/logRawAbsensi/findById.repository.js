@@ -1,11 +1,8 @@
-// src/repositories/transaction/logRawAbsensi/findById.repository.js
-// Repository untuk mengambil data log raw absensi berdasarkan ID.
+import { LogRawAbsensi } from "../../../models/transactional/logRawAbsensi.model.js";
 
-import { LogRawAbsensi } from '../../../models/transactional/logRawAbsensi.model.js';
-
-const findById = async (id, options = {}) => {
-  const record = await LogRawAbsensi.findByPk(id, options);
-  return record ? record.toJSON() : null;
+const findByIdRepository = async (id, options = {}) => {
+  const row = await LogRawAbsensi.findByPk(id, options);
+  return row ? row.toJSON() : null;
 };
 
-export default findById;
+export default findByIdRepository;

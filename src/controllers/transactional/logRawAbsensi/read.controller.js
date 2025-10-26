@@ -1,23 +1,21 @@
-// src/controllers/transaction/logRawAbsensi/read.controller.js
-// Controller untuk mengambil daftar log raw absensi (transaction domain).
-
-import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
-import { sendResponse } from '../../../helpers/response.helper.js';
-import readService from '../../../services/transactional/logRawAbsensi/read.service.js';
-import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
+import { sendResponse } from "../../../helpers/response.helper.js";
+import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
+import readService from "../../../services/transactional/logRawAbsensi/read.service.js";
+import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const readController = async (req, res) => {
   try {
-    const data = await readService(req.query);
+    const result = await readService(req.query);
     return sendResponse(res, {
-      httpCode: HTTP_STATUS.OK,
-      message: 'List log absensi raw berhasil didapatkan',
-      data,
+      code: HTTP_STATUS.OK,
+      message: "OK",
+      data: result.items,
+      metadata: result.metadata,
     });
-  } catch (err) {
+  } catch (error) {
     return sendResponse(res, {
-      httpCode: mapErrorToStatusCode(err),
-      message: formatErrorMessage(err),
+      code: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };

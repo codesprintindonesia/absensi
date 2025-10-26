@@ -7,7 +7,7 @@ import shiftKerjaRoutes from './master/shiftKerja.route.js';
 import shiftGroupDetailRoutes from './relational/shiftGroupDetail.route.js';
 import databasesRoutes from './databases.route.js';
 import shiftPegawaiRoutes from './relational/shiftPegawai.route.js';
-import logRawAbsensiRoutes from './transaction/logRawAbsensi.route.js';
+import logRawAbsensiRoutes from './transactional/logRawAbsensi.route.js';
 import jobRoutes from "./job.route.js";
 import hariLiburRoutes from './master/hariLibur.route.js';
 import pegawaiLokasiKerjaRoutes from './relational/pegawaiLokasiKerja.route.js';

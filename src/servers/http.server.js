@@ -15,9 +15,9 @@ const httpPort = process.env.PORT || 3000;
   try {
     const db = new Database();
     await db.connect(process.env.DATABASE); // DATABASE=development (misalnya)
-    //logger.info(`Database connected with profile: ${process.env.DATABASE}`);
+    // logger.info(`Database connected with profile: ${process.env.DATABASE}`);
   } catch (error) {
-    //logger.error(`Database connection failed: ${error.message}`);
+    // logger.error(`Database connection failed: ${error.message}`);
   }
 })();
 

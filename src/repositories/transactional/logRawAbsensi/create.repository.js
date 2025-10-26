@@ -1,14 +1,8 @@
-// src/repositories/transaction/logRawAbsensi/create.repository.js
-// Repository untuk menyimpan data log raw absensi (transaction)
-
-import { LogRawAbsensi } from '../../../models/transactional/logRawAbsensi.model.js';
+import { LogRawAbsensi } from "../../../models/transactional/logRawAbsensi.model.js";
 
 const createRepository = async (data, options = {}) => {
-  const record = await LogRawAbsensi.create(data, options);
-  
-  console.log("Created Record:", record);
-
-  return record.toJSON();
+  const row = await LogRawAbsensi.create(data, options);
+  return row.toJSON();
 };
 
 export default createRepository;
