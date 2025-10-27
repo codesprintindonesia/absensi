@@ -48,7 +48,7 @@ const baseFields = {
   batas_radius_toleransi: Joi.number().integer().min(0).optional(), // default 0
 
   is_default: Joi.boolean().optional(), // default false
-  is_aktif: Joi.boolean().optional(), // default true
+  is_active: Joi.boolean().optional(), // default true
 };
 
 // CREATE: id wajib (+ base)
@@ -66,7 +66,7 @@ const updateSchema = Joi.object({
 const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20), 
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
   is_default: Joi.boolean().optional(),
 
   // cari by teks (nama tergantung implementasi)

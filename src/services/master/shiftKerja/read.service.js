@@ -2,11 +2,11 @@
 import readRepository from '../../../repositories/master/shiftKerja/read.repository.js';
  
 const readService = async (queryParams) => {
-  const { page = 1, limit = 20, is_aktif, search } = queryParams;
+  const { page = 1, limit = 20, is_active, search } = queryParams;
   
   // Build filter object
   const filters = {}; 
-  if (is_aktif !== undefined) filters.is_aktif = is_aktif; 
+  if (is_active !== undefined) filters.is_active = is_active; 
   if (search) filters.search = search; // Search akan dihandle di repository
   
   // Business logic: Default sorting berdasarkan created_at terbaru

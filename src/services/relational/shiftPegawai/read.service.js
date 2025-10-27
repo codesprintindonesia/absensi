@@ -7,14 +7,14 @@ const readService = async (queryParams) => {
     id_pegawai,
     id_shift_kerja,
     id_shift_group,
-    is_aktif,
+    is_active,
   } = queryParams;
 
   const filters = {};
   if (id_pegawai) filters.id_pegawai = id_pegawai;
   if (id_shift_kerja) filters.id_shift_kerja = id_shift_kerja;
   if (id_shift_group) filters.id_shift_group = id_shift_group;
-  if (typeof is_aktif !== "undefined") filters.is_aktif = is_aktif === "true" || is_aktif === true;
+  if (typeof is_active !== "undefined") filters.is_active = is_active === "true" || is_active === true;
 
   const options = {
     page: parseInt(page),

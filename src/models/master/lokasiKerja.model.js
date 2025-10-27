@@ -47,7 +47,7 @@ const LokasiKerja = sequelize.define(
       defaultValue: 20,
       validate: { min: 1, max: 1000 },
     },
-    is_aktif: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
@@ -83,7 +83,7 @@ const LokasiKerja = sequelize.define(
         unique: true,
         fields: ["kode_referensi", "type_lokasi"],
       },
-      { name: "idx_lokasi_type_aktif", fields: ["type_lokasi", "is_aktif"] },
+      { name: "idx_lokasi_type_aktif", fields: ["type_lokasi", "is_active"] },
     ],
   }
 );

@@ -26,7 +26,7 @@ const baseFields = {
     .optional(), 
   toleransi_keterlambatan: Joi.number().integer().min(0).optional(),
   keterangan: Joi.string().allow(null, "").optional(),
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
 };
 
 // CREATE
@@ -47,7 +47,7 @@ const readSchema = Joi.object({
   jenis_shift: Joi.string()
     .valid(...JENIS_SHIFT)
     .optional(), 
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
   q: Joi.string().max(100).optional().allow(""),
 });
 

@@ -13,7 +13,7 @@ const baseFields = {
   latitude: Joi.number().min(-90).max(90).optional(),
   longitude: Joi.number().min(-180).max(180).optional(),
   radius: Joi.number().integer().min(1).max(1000).required(),
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
   keterangan: Joi.string().allow(null, "").optional(),
 };
 
@@ -33,7 +33,7 @@ const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
   type_lokasi: Joi.string().valid(...TYPE_LOKASI).optional(),
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
   search: Joi.string().max(100).optional().allow(''),
 });
 

@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import { ShiftPegawai } from "../../../models/relational/shiftPegawai.model.js";
 
 /**
- * Set is_aktif=false untuk assignment aktif lain yang overlap (kecuali excludeId).
+ * Set is_active=false untuk assignment aktif lain yang overlap (kecuali excludeId).
  */
 const deactivateOverlapsRepository = async (
   { id_pegawai, tanggal_mulai, tanggal_akhir = null, excludeId = null, updatedBy = "SYSTEM" },
@@ -18,13 +18,13 @@ const deactivateOverlapsRepository = async (
 
     const where = {
       id_pegawai,
-      is_aktif: true,
+      is_active: true,
       ...(excludeId ? { id: { [Op.ne]: excludeId } } : {}),
       [Op.and]: andConditions,
     };
 
     const [affected] = await ShiftPegawai.update(
-      { is_aktif: false, updated_by: updatedBy, updated_at: new Date() },
+      { is_active: false, updated_by: updatedBy, updated_at: new Date() },
       { where, ...options }
     );
 

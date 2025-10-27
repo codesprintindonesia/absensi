@@ -18,8 +18,8 @@ const read = async (params, options = {}) => {
     where.type_lokasi = filters.type_lokasi;
   }
 
-  if (filters.is_aktif !== undefined) {
-    where.is_aktif = filters.is_aktif;
+  if (filters.is_active !== undefined) {
+    where.is_active = filters.is_active;
   }
 
   if (filters.search) {

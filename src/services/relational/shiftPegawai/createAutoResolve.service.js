@@ -17,7 +17,7 @@ const createAutoResolveService = async (data, createdBy = "SYSTEM") => {
 
   const sequelize = await getSequelize();
   return await sequelize.transaction(async (trx) => {
-    const willBeActive = data.is_aktif !== false;
+    const willBeActive = data.is_active !== false;
 
     if (willBeActive) {
       await deactivateOverlapsRepository(
@@ -33,7 +33,7 @@ const createAutoResolveService = async (data, createdBy = "SYSTEM") => {
 
     const payload = {
       ...data,
-      is_aktif: willBeActive,
+      is_active: willBeActive,
       created_by: createdBy,
       updated_by: createdBy,
       updated_at: new Date(),

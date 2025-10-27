@@ -60,7 +60,7 @@ const KebijakanAbsensi = sequelize.define(
       allowNull: true,
       defaultValue: false,
     },
-    is_aktif: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true,
@@ -84,7 +84,7 @@ const KebijakanAbsensi = sequelize.define(
     timestamps: false, // trigger DB yang urus updated_at
     // Tambahan opsional: index ringan untuk query umum
     // indexes: [
-    //   { name: 'idx_kebijakan_aktif', fields: ['is_aktif'] }, 
+    //   { name: 'idx_kebijakan_aktif', fields: ['is_active'] }, 
     // ],
   }
 );

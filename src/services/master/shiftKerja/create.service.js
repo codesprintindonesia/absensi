@@ -4,7 +4,7 @@ import createRepository from '../../../repositories/master/shiftKerja/create.rep
 const createService = async (data) => { 
   const newData = {
     ...data,
-    is_aktif: data.is_aktif !== undefined ? data.is_aktif : true, 
+    is_active: data.is_active !== undefined ? data.is_active : true, 
   };
   return await createRepository(newData);
 };

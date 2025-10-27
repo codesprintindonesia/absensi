@@ -52,7 +52,7 @@ const ShiftKerja = sequelize.define('m_shift_kerja', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  is_aktif: {
+  is_active: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: true,

@@ -14,7 +14,7 @@ const baseFields = {
   id_shift_group: Joi.string().max(8).trim().allow(null),
   tanggal_mulai: dateSchema.required(),
   tanggal_akhir: dateSchema.allow(null),
-  is_aktif: Joi.boolean().optional()
+  is_active: Joi.boolean().optional()
 };
 
 // Pastikan salah satu dari id_shift_kerja atau id_shift_group harus diisi
@@ -39,7 +39,7 @@ const readSchema = Joi.object({
   id_pegawai: Joi.string().max(10).optional(),
   id_shift_kerja: Joi.string().max(8).optional(),
   id_shift_group: Joi.string().max(8).optional(),
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
   q: Joi.string().max(100).optional().allow("")
 });
 

@@ -18,7 +18,7 @@ const findOverlapActiveRepository = async (
 
   const where = {
     id_pegawai,
-    is_aktif: true,
+    is_active: true,
     ...(excludeId ? { id: { [Op.ne]: excludeId } } : {}),
     [Op.and]: andConditions,
   };

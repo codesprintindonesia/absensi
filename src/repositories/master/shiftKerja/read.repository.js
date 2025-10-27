@@ -14,8 +14,8 @@ const read = async (params, options = {}) => {
   if (filters.jenis_shift) {
     where.jenis_shift = filters.jenis_shift;
   } 
-  if (filters.is_aktif !== undefined) {
-    where.is_aktif = filters.is_aktif;
+  if (filters.is_active !== undefined) {
+    where.is_active = filters.is_active;
   }
   if (filters.search) {
     where[Op.or] = [

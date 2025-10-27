@@ -39,7 +39,7 @@ const ShiftPegawai = sequelize.define(
         },
       },
     },
-    is_aktif: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true,

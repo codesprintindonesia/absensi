@@ -40,7 +40,7 @@ const PegawaiLokasiKerja = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     }, 
-    is_aktif: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true,
@@ -67,7 +67,7 @@ const PegawaiLokasiKerja = sequelize.define(
     freezeTableName: true,
     timestamps: false, // trigger DB yang mengurus updated_at
     indexes: [
-      // CREATE INDEX idx_pegawai_lokasi_aktif ON absensi.r_pegawai_lokasi_kerja (id_pegawai, is_aktif, tanggal_mulai_berlaku, tanggal_akhir_berlaku)
+      // CREATE INDEX idx_pegawai_lokasi_aktif ON absensi.r_pegawai_lokasi_kerja (id_pegawai, is_active, tanggal_mulai_berlaku, tanggal_akhir_berlaku)
       {
         name: "idx_pegawai_lokasi_aktif",
         fields: [

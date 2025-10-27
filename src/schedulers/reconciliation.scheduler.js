@@ -153,7 +153,7 @@ const prosesAbsensiSatuPegawai = async (idPegawai, tanggalProses) => {
 
     // 5. AMBIL KEBIJAKAN ABSENSI
     const kebijakan = await KebijakanAbsensi.findOne({
-      where: { is_default: true, is_aktif: true },
+      where: { is_default: true, is_active: true },
       attributes: ["id", "toleransi_keterlambatan"],
     });
 

@@ -16,7 +16,7 @@ const createService = async (data) => {
   }
 
   // cek overlap jika aktif
-  const isAktif = typeof data.is_aktif === "boolean" ? data.is_aktif : true;
+  const isAktif = typeof data.is_active === "boolean" ? data.is_active : true;
   if (isAktif) {
     const conflict = await findOverlapActiveRepository({
       id_pegawai: data.id_pegawai,

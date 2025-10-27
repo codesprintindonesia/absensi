@@ -25,7 +25,7 @@ const create = async (data) => {
   // Transform data dengan business rules
   const locationData = {
     ...data,
-    is_aktif: data.is_aktif !== undefined ? data.is_aktif : true,
+    is_active: data.is_active !== undefined ? data.is_active : true,
     radius: data.radius || getDefaultRadius(data.type_lokasi),
   };
 

@@ -8,7 +8,7 @@ const baseFields = {
   id_shift_group: Joi.string().max(8).trim().allow(null),
   tanggal_mulai: Joi.date().iso().required(),
   tanggal_akhir: Joi.date().iso().min(Joi.ref("tanggal_mulai")).allow(null),
-  is_aktif: Joi.boolean().default(true),
+  is_active: Joi.boolean().default(true),
   id_personal: Joi.string().max(20).trim().required(),
   nama_pegawai: Joi.string().max(100).trim().required(),
 };
@@ -35,7 +35,7 @@ const updateSchema = Joi.object({
     Joi.date().iso().min(Joi.ref("tanggal_mulai")),
     Joi.valid(null)
   ),
-  is_aktif: Joi.boolean(),
+  is_active: Joi.boolean(),
   id_personal: Joi.string().max(20).trim(),
   nama_pegawai: Joi.string().max(100).trim(),
 }).min(1).custom((value, helpers) => {
@@ -58,7 +58,7 @@ const readSchema = Joi.object({
   id_pegawai: Joi.string().max(10).trim().optional(),
   id_shift_kerja: Joi.string().max(8).trim().optional(),
   id_shift_group: Joi.string().max(8).trim().optional(),
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
 });
 
 const paramsSchema = Joi.object({

@@ -22,7 +22,7 @@ const checkDeleteImpact = async (id) => {
       id: existingLocation.id,
       nama: existingLocation.nama,
       type_lokasi: existingLocation.type_lokasi,
-      is_aktif: existingLocation.is_aktif
+      is_active: existingLocation.is_active
     },
     delete_status: {
       can_delete: usageInfo.canDelete,
@@ -44,7 +44,7 @@ const checkDeleteImpact = async (id) => {
       ]
     },
     recommendation: !usageInfo.canDelete ? 
-      'Gunakan soft delete (set is_aktif = false) atau pindahkan pegawai ke lokasi lain terlebih dahulu' :
+      'Gunakan soft delete (set is_active = false) atau pindahkan pegawai ke lokasi lain terlebih dahulu' :
       usageInfo.totalAffectedRecords > 0 ?
         'Pertimbangkan untuk backup data terkait sebelum menghapus' :
         'Aman untuk dihapus'

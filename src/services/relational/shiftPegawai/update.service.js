@@ -33,10 +33,10 @@ const updateService = async (id, updateData, updatedBy = "SYSTEM") => {
     id_pegawai: updateData.id_pegawai ?? existing.id_pegawai,
     tanggal_mulai: updateData.tanggal_mulai ?? existing.tanggal_mulai,
     tanggal_akhir: (updateData.tanggal_akhir !== undefined ? updateData.tanggal_akhir : existing.tanggal_akhir) ?? null,
-    is_aktif: updateData.is_aktif !== undefined ? updateData.is_aktif : existing.is_aktif,
+    is_active: updateData.is_active !== undefined ? updateData.is_active : existing.is_active,
   };
 
-  if (final.is_aktif === true) {
+  if (final.is_active === true) {
     const conflict = await findOverlapActiveRepository({
       id_pegawai: final.id_pegawai,
       tanggal_mulai: final.tanggal_mulai,

@@ -82,7 +82,7 @@ export const getShiftHarianByDate = async (tanggal) => {
 export const getKebijakanAbsensiAktif = async () => {
   const kebijakan = await KebijakanAbsensi.findOne({
     where: {
-      is_aktif: true,
+      is_active: true,
       is_default: true,
     },
     order: [["created_at", "DESC"]],

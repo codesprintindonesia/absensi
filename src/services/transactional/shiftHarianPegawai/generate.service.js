@@ -41,7 +41,7 @@ export const generateShiftHarianPegawaiService = async ({
 
     // 1. Get daftar pegawai dari r_shift_pegawai
     const shiftPegawaiList = await sequelize.query(
-      `SELECT * FROM absensi.r_shift_pegawai WHERE is_aktif = true ${
+      `SELECT * FROM absensi.r_shift_pegawai WHERE is_active = true ${
         idPegawai ? "AND id_pegawai = :idPegawai" : ""
       }`,
       {
@@ -127,7 +127,7 @@ const processShiftForPegawai = async ({
   // Get lokasi kerja dengan prioritas terkecil
   const lokasi = await sequelize.query(
     `SELECT * FROM absensi.r_pegawai_lokasi_kerja 
-     WHERE id_pegawai = :idPegawai AND is_aktif = true 
+     WHERE id_pegawai = :idPegawai AND is_active = true 
      ORDER BY prioritas_lokasi ASC LIMIT 1`,
     {
       replacements: { idPegawai: shiftPegawai.id_pegawai },

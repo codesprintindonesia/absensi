@@ -7,7 +7,7 @@ const readRepository = async (params, options = {}) => {
   if (filters.id_pegawai) where.id_pegawai = filters.id_pegawai;
   if (filters.id_shift_kerja) where.id_shift_kerja = filters.id_shift_kerja;
   if (filters.id_shift_group) where.id_shift_group = filters.id_shift_group;
-  if (typeof filters.is_aktif === "boolean") where.is_aktif = filters.is_aktif;
+  if (typeof filters.is_active === "boolean") where.is_active = filters.is_active;
 
   const offset = (page - 1) * limit;
 

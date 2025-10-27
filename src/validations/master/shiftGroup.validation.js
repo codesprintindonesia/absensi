@@ -16,7 +16,7 @@ const baseFields = {
   keterangan: Joi.string().allow(null, "").optional(),
 
   // Status aktif: boolean opsional (default true)
-  is_aktif: Joi.boolean().optional(),
+  is_active: Joi.boolean().optional(),
 };
 
 // VALIDASI CREATE
@@ -37,7 +37,7 @@ const updateSchema = Joi.object({
 const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
-  is_aktif: Joi.boolean().optional(),        // filter status aktif
+  is_active: Joi.boolean().optional(),        // filter status aktif
   search: Joi.string().max(100).optional().allow(""), // pencarian teks pada nama/keterangan
 });
 

@@ -11,7 +11,7 @@ const baseFields = {
   tanggal_akhir_berlaku: Joi.date().iso().min(Joi.ref("tanggal_mulai_berlaku")).allow(null), 
   prioritas_lokasi: Joi.number().integer().min(1).default(1), 
   keterangan: Joi.string().allow("", null), 
-  is_aktif: Joi.boolean().default(true),
+  is_active: Joi.boolean().default(true),
   id_personal: Joi.string().max(20).trim().allow(null),
 };
 
@@ -33,7 +33,7 @@ const updateSchema = Joi.object({
   ), 
   prioritas_lokasi: Joi.number().integer().min(1), 
   keterangan: Joi.string().allow(""), 
-  is_aktif: Joi.boolean(),
+  is_active: Joi.boolean(),
   id_personal: Joi.string().max(20).trim().allow(null),
 }).min(1);
 
@@ -44,7 +44,7 @@ const readSchema = Joi.object({
 
   id_pegawai: Joi.string().max(10).trim().optional(),
   id_lokasi_kerja: Joi.string().max(8).trim().optional(),
-  is_aktif: Joi.boolean().optional(), 
+  is_active: Joi.boolean().optional(), 
   prioritas_lokasi: Joi.number().integer().min(1).optional(), 
 
   // filter tanggal opsional

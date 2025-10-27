@@ -7,12 +7,12 @@ import readRepository from '../../../repositories/master/lokasiKerja/read.reposi
  * @returns {Object} List lokasi kerja dengan metadata pagination
  */
 const read = async (queryParams) => {
-  const { page, limit, type_lokasi, is_aktif, search } = queryParams;
+  const { page, limit, type_lokasi, is_active, search } = queryParams;
   
   // Build filter object
   const filters = {};
   if (type_lokasi) filters.type_lokasi = type_lokasi;
-  if (is_aktif !== undefined) filters.is_aktif = is_aktif;
+  if (is_active !== undefined) filters.is_active = is_active;
   if (search) filters.search = search; // Search akan dihandle di repository
   
   // Business logic: Default sorting berdasarkan created_at terbaru

@@ -27,7 +27,7 @@ const ShiftGroup = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    is_aktif: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true,
