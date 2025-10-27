@@ -1,6 +1,5 @@
 // src/validations/master/kebijakanAbsensi.validation.js
-import Joi from "joi"; 
-import { TYPE_REFERENSI } from "../../models/master/kebijakanAbsensi.model.js";
+import Joi from "joi";  
 
 // Reusable pieces
 const idSchema = Joi.string().max(8).trim().required();
@@ -10,14 +9,7 @@ const hhmmss = Joi.string()
 
 // Base fields mengikuti kolom tabel
 const baseFields = { 
-  nama: Joi.string().max(100).trim().required(),
-
-  // nullable di DB → optional di validation
-  kode_referensi: Joi.string().max(20).trim().allow(null, "").optional(),
-
-  type_referensi: Joi.string()
-    .valid(...TYPE_REFERENSI)
-    .optional(), // default 'GLOBAL' di DB/model
+  nama: Joi.string().max(100).trim().required(), 
 
   toleransi_keterlambatan: Joi.number().integer().min(0).optional(), // default 15
 
@@ -77,7 +69,7 @@ const readSchema = Joi.object({
   is_aktif: Joi.boolean().optional(),
   is_default: Joi.boolean().optional(),
 
-  // cari by teks (nama/kode_referensi tergantung implementasi)
+  // cari by teks (nama tergantung implementasi)
   search: Joi.string().max(100).optional().allow(""),
 });
 

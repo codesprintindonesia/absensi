@@ -10,7 +10,7 @@ const baseFields = {
   nama: Joi.string().max(100).trim().required(),
 
   // Durasi rotasi dalam minggu: integer minimal 1 (default 1 di DB):contentReference[oaicite:1]{index=1}
-  durasi_rotasi_minggu: Joi.number().integer().min(1).optional(),
+  durasi_rotasi_hari: Joi.number().integer().min(1).optional(),
 
   // Keterangan: string atau null, opsional
   keterangan: Joi.string().allow(null, "").optional(),

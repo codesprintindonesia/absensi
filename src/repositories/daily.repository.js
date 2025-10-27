@@ -53,8 +53,7 @@ export const getRawAbsensiByDate = async (tanggal) => {
 export const getShiftHarianByDate = async (tanggal) => {
   const jadwal = await ShiftHarianPegawai.findAll({
     where: {
-      tanggal_kerja: tanggal,
-      status_persetujuan: "APPROVED",
+      tanggal_kerja: tanggal, 
     },
     include: [
       {

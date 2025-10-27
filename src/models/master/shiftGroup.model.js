@@ -18,10 +18,9 @@ const ShiftGroup = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    durasi_rotasi_minggu: {
+    durasi_rotasi_hari: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: 1,
+      allowNull: true, 
       validate: { min: 1 }, // sesuai constraint durasi > 0:contentReference[oaicite:1]{index=1}
     },
     keterangan: {

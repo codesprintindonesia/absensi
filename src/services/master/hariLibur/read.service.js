@@ -7,11 +7,10 @@ import readRepository from '../../../repositories/master/hariLibur/read.reposito
  * @returns {Object} List hari libur dengan metadata pagination
  */
 const read = async (queryParams) => {
-  const { page, limit, jenis_libur, search } = queryParams;
+  const { page, limit, search } = queryParams;
   
   // Build filter object
-  const filters = {};
-  if (jenis_libur) filters.jenis_libur = jenis_libur;
+  const filters = {}; 
   if (search) filters.search = search;
   
   // Business logic: Default sorting berdasarkan tanggal ascending

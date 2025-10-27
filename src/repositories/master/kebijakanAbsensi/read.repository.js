@@ -21,7 +21,6 @@ const readRepository = async (params, options = {}) => {
   if (filters.search) {
     where[Op.or] = [
       { nama: { [Op.iLike]: `%${filters.search}%` } },
-      { kode_referensi: { [Op.iLike]: `%${filters.search}%` } }
     ];
   }
 

@@ -6,11 +6,8 @@ const readService = async (queryParams) => {
     limit = 20,
     id_pegawai,
     id_lokasi_kerja,
-    is_aktif,
-    is_lokasi_utama,
-    prioritas_lokasi,
-    status_persetujuan,
-    jenis_penugasan,
+    is_aktif, 
+    prioritas_lokasi, 
     tanggal_mulai_berlaku,
     tanggal_akhir_berlaku,
   } = queryParams;
@@ -19,11 +16,8 @@ const readService = async (queryParams) => {
   const filters = {};
   if (id_pegawai) filters.id_pegawai = id_pegawai;
   if (id_lokasi_kerja) filters.id_lokasi_kerja = id_lokasi_kerja;
-  if (typeof is_aktif !== "undefined") filters.is_aktif = is_aktif === "true" || is_aktif === true;
-  if (typeof is_lokasi_utama !== "undefined") filters.is_lokasi_utama = is_lokasi_utama === "true" || is_lokasi_utama === true;
-  if (prioritas_lokasi) filters.prioritas_lokasi = prioritas_lokasi;
-  if (status_persetujuan) filters.status_persetujuan = status_persetujuan;
-  if (jenis_penugasan) filters.jenis_penugasan = jenis_penugasan;
+  if (typeof is_aktif !== "undefined") filters.is_aktif = is_aktif === "true" || is_aktif === true; 
+  if (prioritas_lokasi) filters.prioritas_lokasi = prioritas_lokasi; 
   if (tanggal_mulai_berlaku) filters.tanggal_mulai_berlaku = tanggal_mulai_berlaku;
   if (typeof tanggal_akhir_berlaku !== "undefined") filters.tanggal_akhir_berlaku = tanggal_akhir_berlaku;
 

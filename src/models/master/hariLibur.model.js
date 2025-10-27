@@ -1,10 +1,6 @@
 // src/models/hariLibur.model.js
 import { DataTypes } from "sequelize";
-import { getSequelize } from "../../libraries/database.instance.js";
-
-// Define enum constants untuk jenis_libur
-const JENIS_LIBUR = ["LIBUR_NASIONAL", "CUTI_BERSAMA", "LIBUR_DAERAH"];
-
+import { getSequelize } from "../../libraries/database.instance.js"; 
 // Get sequelize instance
 const sequelize = await getSequelize();
 
@@ -16,15 +12,10 @@ const HariLibur = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    nama_libur: {
+    nama: {
       type: DataTypes.STRING(100),
       allowNull: false,
-    },
-    jenis_libur: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-      validate: { isIn: [JENIS_LIBUR] },
-    },
+    }, 
     keterangan: {
       type: DataTypes.TEXT,
       allowNull: true,
@@ -50,4 +41,4 @@ const HariLibur = sequelize.define(
 );
 
 // Export di akhir script sesuai coding guidelines
-export { JENIS_LIBUR, HariLibur };
+export { HariLibur };

@@ -7,9 +7,7 @@ const idSchema = Joi.string().max(12).trim().required();
 // base fields
 const baseFields = {
   id_shift_group: Joi.string().max(8).trim().required(),
-  id_shift_kerja: Joi.string().max(8).trim().required(),
-  hari_dalam_minggu: Joi.number().integer().min(1).max(7).required(),
-  urutan_minggu: Joi.number().integer().min(1).optional(),
+  id_shift_kerja: Joi.string().max(8).trim().required(),  
 };
 
 // validasi create
@@ -28,9 +26,7 @@ const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
   id_shift_group: Joi.string().max(8).optional(),
-  id_shift_kerja: Joi.string().max(8).optional(),
-  hari_dalam_minggu: Joi.number().integer().min(1).max(7).optional(),
-  urutan_minggu: Joi.number().integer().min(1).optional(),
+  id_shift_kerja: Joi.string().max(8).optional(),  
 });
 
 // validasi params (:id)

@@ -1,13 +1,12 @@
 // src/services/master/shiftGroup/read.service.js
-import readRepository from '../../../repositories/master/shiftGroup/read.repository.js';
+import readRepository from '../../../repositories/master/shiftKerja/read.repository.js';
  
 const readService = async (queryParams) => {
-  const { page, limit, is_aktif, is_umum, search } = queryParams;
+  const { page = 1, limit = 20, is_aktif, search } = queryParams;
   
   // Build filter object
   const filters = {}; 
-  if (is_aktif !== undefined) filters.is_aktif = is_aktif;
-  if (is_umum !== undefined) filters.is_umum = is_umum;
+  if (is_aktif !== undefined) filters.is_aktif = is_aktif; 
   if (search) filters.search = search; // Search akan dihandle di repository
   
   // Business logic: Default sorting berdasarkan created_at terbaru

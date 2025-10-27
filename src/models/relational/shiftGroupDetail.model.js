@@ -21,18 +21,7 @@ const ShiftGroupDetail = sequelize.define(
     id_shift_kerja: {
       type: DataTypes.STRING(8),
       allowNull: false,
-    },
-    hari_dalam_minggu: {
-      type: DataTypes.SMALLINT,
-      allowNull: false,
-      validate: { min: 1, max: 7 },
-    },
-    urutan_minggu: {
-      type: DataTypes.SMALLINT,
-      allowNull: true,
-      defaultValue: 1,
-      validate: { min: 1 },
-    },
+    },  
     created_at: {
       type: DataTypes.DATE,
       allowNull: true,

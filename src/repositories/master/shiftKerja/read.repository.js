@@ -13,17 +13,13 @@ const read = async (params, options = {}) => {
 
   if (filters.jenis_shift) {
     where.jenis_shift = filters.jenis_shift;
-  }
-  if (filters.is_umum !== undefined) {
-    where.is_umum = filters.is_umum;
-  }
+  } 
   if (filters.is_aktif !== undefined) {
     where.is_aktif = filters.is_aktif;
   }
   if (filters.search) {
     where[Op.or] = [
-      { nama: { [Op.iLike]: `%${filters.search}%` } },
-      { kode_shift: { [Op.iLike]: `%${filters.search}%` } },
+      { nama: { [Op.iLike]: `%${filters.search}%` } }, 
     ];
   }
 

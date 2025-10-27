@@ -1,9 +1,7 @@
 // src/models/kebijakanAbsensi.models.js
 import { DataTypes } from "sequelize";
 import { getSequelize } from "../../libraries/database.instance.js";
-
-// Enum untuk type_referensi (sesuai CHECK di DB)
-const TYPE_REFERENSI = ["CABANG", "DIVISI", "UNIT_KERJA", "GLOBAL", "CUSTOM"];
+ 
 
 // Instance sequelize (menyesuaikan gaya contohmu)
 const sequelize = await getSequelize();
@@ -19,17 +17,7 @@ const KebijakanAbsensi = sequelize.define(
     nama: {
       type: DataTypes.STRING(100),
       allowNull: false,
-    },
-    kode_referensi: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-    },
-    type_referensi: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: "GLOBAL",
-      validate: { isIn: [TYPE_REFERENSI] }, // mirror CHECK constraint
-    },
+    }, 
     toleransi_keterlambatan: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -96,11 +84,10 @@ const KebijakanAbsensi = sequelize.define(
     timestamps: false, // trigger DB yang urus updated_at
     // Tambahan opsional: index ringan untuk query umum
     // indexes: [
-    //   { name: 'idx_kebijakan_aktif', fields: ['is_aktif'] },
-    //   { name: 'idx_kebijakan_type', fields: ['type_referensi'] },
+    //   { name: 'idx_kebijakan_aktif', fields: ['is_aktif'] }, 
     // ],
   }
 );
 
 // Export di akhir script sesuai gaya contohmu
-export { TYPE_REFERENSI, KebijakanAbsensi };
+export { KebijakanAbsensi };

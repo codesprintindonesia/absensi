@@ -9,7 +9,7 @@ import { Op } from "sequelize";
  * @returns {Object} Result dengan rows dan count
  */
 const read = async (params, options = {}) => {
-  const { page, limit, filters, orderBy } = params;
+  const { page = 1, limit = 20, filters, orderBy } = params;
 
   // Build where clause dari filters
   const where = {};
@@ -25,7 +25,6 @@ const read = async (params, options = {}) => {
   if (filters.search) {
     where[Op.or] = [
       { nama: { [Op.iLike]: `%${filters.search}%` } },
-      { kode_referensi: { [Op.iLike]: `%${filters.search}%` } },
       { alamat: { [Op.iLike]: `%${filters.search}%` } },
     ];
   }

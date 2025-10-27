@@ -12,17 +12,12 @@ const read = async (options = {}) => {
   const { page = 1, limit = 20, filters = {}, orderBy = [['tanggal', 'ASC']] } = options;
   
   const offset = (page - 1) * limit;
-  const where = {};
+  const where = {}; 
 
-  // Filter by jenis_libur
-  if (filters.jenis_libur) {
-    where.jenis_libur = filters.jenis_libur;
-  }
-
-  // Search by nama_libur or keterangan
+  // Search by nama or keterangan
   if (filters.search) {
     where[Op.or] = [
-      { nama_libur: { [Op.iLike]: `%${filters.search}%` } },
+      { nama: { [Op.iLike]: `%${filters.search}%` } },
       { keterangan: { [Op.iLike]: `%${filters.search}%` } }
     ];
   }

@@ -13,11 +13,7 @@ const ShiftKerja = sequelize.define('m_shift_kerja', {
     type: DataTypes.STRING(8),
     allowNull: false,
     primaryKey: true,
-  },
-  kode_shift: {
-    type: DataTypes.STRING(10),
-    allowNull: false,
-  },
+  }, 
   nama: {
     type: DataTypes.STRING(50),
     allowNull: false,
@@ -45,12 +41,7 @@ const ShiftKerja = sequelize.define('m_shift_kerja', {
     allowNull: true,
     defaultValue: 'NORMAL',
     validate: { isIn: [JENIS_SHIFT] },
-  },
-  is_umum: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-    defaultValue: true,
-  },
+  }, 
   toleransi_keterlambatan: {
     type: DataTypes.INTEGER,
     allowNull: true,

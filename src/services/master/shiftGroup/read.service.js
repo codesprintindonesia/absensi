@@ -2,7 +2,7 @@
 import readRepository from '../../../repositories/master/shiftGroup/read.repository.js';
  
 const readService = async (queryParams) => {
-  const { page, limit, is_aktif, search } = queryParams;
+  const { page = 1, limit = 20, is_aktif, search } = queryParams;
   
   // Build filter object
   const filters = {}; 

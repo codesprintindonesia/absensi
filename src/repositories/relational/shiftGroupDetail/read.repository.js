@@ -5,10 +5,7 @@ const readRepository = async (params, options = {}) => {
   const where = {};
 
   if (filters.id_shift_group) where.id_shift_group = filters.id_shift_group;
-  if (filters.id_shift_kerja) where.id_shift_kerja = filters.id_shift_kerja;
-  if (filters.hari_dalam_minggu)
-    where.hari_dalam_minggu = filters.hari_dalam_minggu;
-  if (filters.urutan_minggu) where.urutan_minggu = filters.urutan_minggu;
+  if (filters.id_shift_kerja) where.id_shift_kerja = filters.id_shift_kerja;  
 
   const offset = (page - 1) * limit;
 

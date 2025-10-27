@@ -15,34 +15,10 @@ const updateService = async (id, updateData, updatedBy = "SYSTEM") => {
 
   // nilai target setelah update (pakai payload jika ada, fallback ke existing)
   const targetIdPegawai =
-    updateData.id_pegawai !== undefined ? updateData.id_pegawai : existing.id_pegawai;
-
-  const targetIsLokasiUtama =
-    updateData.is_lokasi_utama !== undefined ? updateData.is_lokasi_utama : existing.is_lokasi_utama;
+    updateData.id_pegawai !== undefined ? updateData.id_pegawai : existing.id_pegawai; 
 
   const targetIsAktif =
-    updateData.is_aktif !== undefined ? updateData.is_aktif : existing.is_aktif;
-
-  // VALIDASI: 1 pegawai tidak boleh punya >1 lokasi utama & aktif
-  if (targetIsLokasiUtama === true && targetIsAktif === true) {
-    const check = await readRepository({
-      page: 1,
-      limit: 1,
-      filters: {
-        id_pegawai: targetIdPegawai,
-        is_lokasi_utama: true,
-        is_aktif: true,
-      },
-      // order default by created_at desc di repo
-    });
-
-    const conflict = check.rows.find((r) => r.id !== id);
-    if (conflict) {
-      const error = new Error("PEGAWAI_SUDAH_PUNYA_LOKASI_UTAMA_AKTIF");
-      error.statusCode = HTTP_STATUS.CONFLICT; // 409
-      throw error;
-    }
-  }
+    updateData.is_aktif !== undefined ? updateData.is_aktif : existing.is_aktif; 
 
   // siapkan payload final (gaya kamu: catat updated_by & updated_at)
   const dataToUpdate = {

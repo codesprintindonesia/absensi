@@ -9,7 +9,7 @@ import logger from "../../../utils/logger.utils.js";
  */
 export const generateShiftHarianPegawaiController = async (req, res) => {
   try {
-    const { tanggal_mulai, tanggal_akhir, id_pegawai } = req.body;
+    const { tanggal_mulai, tanggal_akhir, id_pegawai, mode } = req.body;
 
     logger.info(
       "[ShiftHarianGeneratorController] Request generate shift harian",
@@ -20,10 +20,13 @@ export const generateShiftHarianPegawaiController = async (req, res) => {
       }
     );
 
+    console.log("MODE", mode)
+
     const result = await generateShiftHarianPegawaiService({
       tanggalMulai: tanggal_mulai,
       tanggalAkhir: tanggal_akhir,
       idPegawai: id_pegawai,
+      mode: mode,
     });
 
     return res.status(200).json({

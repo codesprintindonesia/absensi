@@ -1,14 +1,13 @@
 // src/services/transactional/shiftHarianPegawai/generate.service.js
-// UNIFIED CYCLE-BASED APPROACH
 
 import { getSequelize } from "../../../libraries/database.instance.js";
 import logger from "../../../utils/logger.utils.js";
 
+// Get sequelize instance
 const sequelize = await getSequelize();
 
 /**
  * Generate shift harian untuk pegawai
- * UNIFIED APPROACH: Semua pattern menggunakan cycle-based logic
  *
  * @param {Object} params
  * @param {Date} params.tanggalMulai - Tanggal mulai
@@ -20,23 +19,14 @@ export const generateShiftHarianPegawaiService = async ({
   tanggalMulai,
   tanggalAkhir,
   idPegawai = null,
-  mode = "error", // ← NEW PARAMETER: 'skip' | 'overwrite' | 'error'
 }) => {
   const transaction = await sequelize.transaction();
-
-  // Validate mode
-  if (!["skip", "overwrite", "error"].includes(mode)) {
-    throw new Error(
-      `Invalid mode: ${mode}. Must be 'skip', 'overwrite', or 'error'`
-    );
-  }
 
   try {
     logger.info("[ShiftHarianGenerator] Memulai generate shift harian", {
       tanggalMulai,
       tanggalAkhir,
       idPegawai,
-      mode,
     });
 
     // 1. Get daftar pegawai dari r_shift_pegawai
@@ -71,17 +61,11 @@ export const generateShiftHarianPegawaiService = async ({
         await processShiftForPegawai({
           shiftPegawai,
           tanggalArray,
-          mode,
           transaction,
         });
 
         results.totalGenerated += tanggalArray.length;
       } catch (error) {
-        logger.error("[ShiftHarianGenerator] Error untuk pegawai", {
-          idPegawai: shiftPegawai.id_pegawai,
-          error: error.message,
-        });
-
         results.errors.push({
           idPegawai: shiftPegawai.id_pegawai,
           namaPegawai: shiftPegawai.nama_pegawai,
@@ -99,7 +83,7 @@ export const generateShiftHarianPegawaiService = async ({
 
     return {
       success: true,
-      message: "Generate shift harian selesai",
+      message: "Generate shift harian berhasil",
       data: results,
     };
   } catch (error) {
@@ -107,7 +91,6 @@ export const generateShiftHarianPegawaiService = async ({
 
     logger.error("[ShiftHarianGenerator] Error generate shift harian", {
       error: error.message,
-      stack: error.stack,
     });
 
     throw error;
@@ -116,12 +99,10 @@ export const generateShiftHarianPegawaiService = async ({
 
 /**
  * Process shift untuk satu pegawai
- * UNIFIED: Semua pattern (fixed, rotating) menggunakan cycle-based logic
  */
 const processShiftForPegawai = async ({
   shiftPegawai,
   tanggalArray,
-  mode,
   transaction,
 }) => {
   // Get lokasi kerja dengan prioritas terkecil
@@ -154,44 +135,13 @@ const processShiftForPegawai = async ({
     );
   }
 
-  let shiftGroupInfo = null;
+  // Get shift pattern untuk rotating shift
   let shiftPattern = null;
-  let cycleLength = 0;
-
   if (isRotatingShift) {
-    // Get shift group info
-    const groupInfo = await sequelize.query(
-      `SELECT * FROM absensi.m_shift_group WHERE id = :idShiftGroup`,
-      {
-        replacements: { idShiftGroup: shiftPegawai.id_shift_group },
-        type: sequelize.QueryTypes.SELECT,
-        transaction,
-      }
-    );
-
-    if (!groupInfo || groupInfo.length === 0) {
-      throw new Error(
-        `Shift group ${shiftPegawai.id_shift_group} tidak ditemukan`
-      );
-    }
-
-    shiftGroupInfo = groupInfo[0];
-
-    // Validate: durasi_rotasi_hari harus ada (unified cycle-based)
-    if (!shiftGroupInfo.durasi_rotasi_hari) {
-      throw new Error(
-        `Shift group ${shiftPegawai.id_shift_group} belum di-migrate ke cycle-based. Durasi rotasi hari tidak ditemukan.`
-      );
-    }
-
-    cycleLength = shiftGroupInfo.durasi_rotasi_hari;
-
-    // Get pattern dari r_shift_group_detail
     shiftPattern = await sequelize.query(
       `SELECT * FROM absensi.r_shift_group_detail 
        WHERE id_shift_group = :idShiftGroup 
-       AND urutan_hari_siklus IS NOT NULL
-       ORDER BY urutan_hari_siklus`,
+       ORDER BY urutan_minggu`,
       {
         replacements: { idShiftGroup: shiftPegawai.id_shift_group },
         type: sequelize.QueryTypes.SELECT,
@@ -201,34 +151,10 @@ const processShiftForPegawai = async ({
 
     if (!shiftPattern || shiftPattern.length === 0) {
       throw new Error(
-        `Pattern untuk shift group ${shiftPegawai.id_shift_group} tidak ditemukan`
+        `Shift group ${shiftPegawai.id_shift_group} tidak memiliki detail pattern`
       );
     }
-
-    // Validate: pattern length harus sama dengan cycle length
-    if (shiftPattern.length !== cycleLength) {
-      throw new Error(
-        `Pattern tidak lengkap untuk shift group ${shiftPegawai.id_shift_group}. ` +
-          `Expected ${cycleLength} detail, got ${shiftPattern.length}`
-      );
-    }
-
-    logger.debug("[ShiftHarianGenerator] Shift group info", {
-      idPegawai: shiftPegawai.id_pegawai,
-      idShiftGroup: shiftPegawai.id_shift_group,
-      cycleLength,
-      offset: shiftPegawai.offset_rotasi_hari || 0,
-    });
   }
-
-  // Get offset untuk rotating shift
-  const offset = shiftPegawai.offset_rotasi_hari || 0;
-
-  const results = {
-    inserted: 0,
-    skipped: 0,
-    overwritten: 0,
-  };
 
   // Process setiap tanggal
   for (let dayIndex = 0; dayIndex < tanggalArray.length; dayIndex++) {
@@ -249,93 +175,57 @@ const processShiftForPegawai = async ({
     );
 
     if (existing && existing.length > 0) {
-      // ✅ SMART BEHAVIOR
-      if (mode === "skip") {
-        logger.debug("[ShiftHarianGenerator] Skip existing data", {
-          idPegawai: shiftPegawai.id_pegawai,
-          tanggal,
-        });
-        results.skipped++;
-        continue;
-      } else if (mode === "overwrite") {
-        // Delete existing
-        await sequelize.query(
-          `DELETE FROM absensi.t_shift_harian_pegawai 
-           WHERE id_pegawai = :idPegawai AND tanggal_kerja = :tanggal`,
-          {
-            replacements: { idPegawai: shiftPegawai.id_pegawai, tanggal },
-            type: sequelize.QueryTypes.DELETE,
-            transaction,
-          }
-        );
-
-        logger.info("[ShiftHarianGenerator] Overwrite existing data", {
-          idPegawai: shiftPegawai.id_pegawai,
-          tanggal,
-        });
-        results.overwritten++;
-        // Continue to insert below
-      } else if (mode === "error") {
-        throw new Error(
-          `Data shift untuk pegawai ${shiftPegawai.id_pegawai} ` +
-            `tanggal ${tanggal} sudah ada. ` +
-            `Gunakan mode='overwrite' untuk menimpa data existing.`
-        );
-      }
+      throw new Error(
+        `Shift untuk pegawai ${shiftPegawai.nama_pegawai} tanggal ${tanggal} sudah ada`
+      );
     }
 
     // Tentukan shift_id
     let shiftId;
-
     if (isFixedShift) {
-      // ✅ FIXED SHIFT: selalu sama
       shiftId = shiftPegawai.id_shift_kerja;
     } else {
-      // ✅ ROTATING SHIFT: UNIFIED CYCLE-BASED LOGIC
-      // Berlaku untuk semua pattern (6 hari, 21 hari, atau berapa pun)
+      // Rotating shift
+      const date = new Date(tanggal);
+      // Gunakan format ISO (Senin=1, Minggu=7)
+      const jsDay = date.getDay(); // 0–6
+      const dayOfWeek = jsDay === 0 ? 7 : jsDay;
 
-      // Calculate cycle position dengan offset
-      const cyclePosition = ((dayIndex + offset) % cycleLength) + 1;
+      const maxWeek = Math.max(...shiftPattern.map((p) => p.urutan_minggu));
+      const daysInCycle = maxWeek * 7;
+      const cycleDay = dayIndex % daysInCycle;
+      const weekInCycle = Math.floor(cycleDay / 7) + 1;
 
-      // Find pattern by urutan_hari_siklus
       const pattern = shiftPattern.find(
-        (p) => p.urutan_hari_siklus === cyclePosition
+        (p) =>
+          p.urutan_minggu === weekInCycle && p.hari_dalam_minggu === dayOfWeek
       );
 
       if (!pattern || !pattern.id_shift_kerja) {
         throw new Error(
-          `Pattern tidak ditemukan untuk hari siklus ${cyclePosition} ` +
-            `(dayIndex=${dayIndex}, offset=${offset}, cycleLength=${cycleLength})`
+          `Pattern tidak ditemukan untuk minggu ${weekInCycle} hari ${dayOfWeek}`
         );
       }
 
       shiftId = pattern.id_shift_kerja;
-
-      logger.debug("[ShiftHarianGenerator] Cycle calculation", {
-        tanggal,
-        dayIndex,
-        offset,
-        cycleLength,
-        cyclePosition,
-        shiftId,
-      });
     }
 
     // Generate ID
     const dateStr = tanggal.replace(/-/g, "");
     const id = `JDW-${shiftPegawai.id_pegawai}-${dateStr}`;
 
-    // Insert ke t_shift_harian_pegawai
+    // Insert
     await sequelize.query(
       `INSERT INTO absensi.t_shift_harian_pegawai (
         id, id_pegawai, tanggal_kerja, 
         id_shift_kerja_original, id_shift_kerja_final,
-        id_lokasi_kerja_original, id_lokasi_kerja_final,
+        id_lokasi_kerja_original, id_lokasi_kerja_final, 
         nama_pegawai, id_personal
       ) VALUES (
         :id, :idPegawai, :tanggalKerja,
         :shiftOriginal, :shiftFinal,
         :lokasiOriginal, :lokasiFinal,
+        'NORMAL', 'APPROVED',
         :namaPegawai, :idPersonal
       )`,
       {
@@ -355,13 +245,6 @@ const processShiftForPegawai = async ({
       }
     );
   }
-
-  logger.info("[ShiftHarianGenerator] Selesai untuk pegawai", {
-    idPegawai: shiftPegawai.id_pegawai,
-    namaPegawai: shiftPegawai.nama_pegawai,
-    cycleLength: cycleLength || "FIXED",
-    totalDays: tanggalArray.length,
-  });
 };
 
 /**
@@ -379,31 +262,3 @@ const generateDateArray = (startDate, endDate) => {
 
   return dates;
 };
-
-/**
- * Helper: Calculate optimal offset untuk multiple pegawai
- */
-export const calculateOptimalOffsets = (numPegawai, cycleLength) => {
-  const offsets = [];
-
-  if (cycleLength % numPegawai === 0 || numPegawai % cycleLength === 0) {
-    // Perfect distribution
-    const step = Math.floor(cycleLength / numPegawai);
-    for (let i = 0; i < numPegawai; i++) {
-      offsets.push(i * step);
-    }
-  } else {
-    // Sub-optimal but workable
-    const step = cycleLength / numPegawai;
-    for (let i = 0; i < numPegawai; i++) {
-      offsets.push(Math.floor(i * step));
-    }
-    console.warn(
-      `Uneven distribution: ${numPegawai} pegawai with ${cycleLength}-day cycle`
-    );
-  }
-
-  return offsets;
-};
-
-export default generateShiftHarianPegawaiService;

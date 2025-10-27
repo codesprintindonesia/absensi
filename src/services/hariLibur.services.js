@@ -12,8 +12,7 @@ import { Op } from 'sequelize';
 export const getAllHariLibur = async (queryParams) => {
   const {
     page = 1,
-    limit = 10,
-    jenis_libur,
+    limit = 10, 
     tahun,
     bulan,
     start_date,
@@ -24,12 +23,7 @@ export const getAllHariLibur = async (queryParams) => {
   } = queryParams;
 
   const offset = (page - 1) * limit;
-  const where = {};
-
-  // Filter berdasarkan jenis libur
-  if (jenis_libur) {
-    where.jenis_libur = jenis_libur;
-  }
+  const where = {}; 
 
   // Filter berdasarkan tahun
   if (tahun) {
@@ -58,7 +52,7 @@ export const getAllHariLibur = async (queryParams) => {
   // Search berdasarkan nama libur atau keterangan
   if (search) {
     where[Op.or] = [
-      { nama_libur: { [Op.iLike]: `%${search}%` } },
+      { nama: { [Op.iLike]: `%${search}%` } },
       { keterangan: { [Op.iLike]: `%${search}%` } },
     ];
   }

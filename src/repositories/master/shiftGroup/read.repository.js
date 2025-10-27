@@ -1,4 +1,5 @@
 // src/repositories/master/shiftKerja/read.repository.js
+import ShiftGroup from '../../../models/master/shiftGroup.model.js';
 import { ShiftKerja } from '../../../models/master/shiftKerja.model.js';
 import { Op } from 'sequelize';
 
@@ -9,27 +10,21 @@ import { Op } from 'sequelize';
 const readRepository = async (params, options = {}) => {
   const { page, limit, filters, orderBy } = params;
 
-  const where = {};
+  const where = {}; 
 
-  if (filters.jenis_shift) {
-    where.jenis_shift = filters.jenis_shift;
-  }
-  if (filters.is_umum !== undefined) {
-    where.is_umum = filters.is_umum;
-  }
   if (filters.is_aktif !== undefined) {
     where.is_aktif = filters.is_aktif;
   }
+  
   if (filters.search) {
     where[Op.or] = [
-      { nama: { [Op.iLike]: `%${filters.search}%` } },
-      { kode_shift: { [Op.iLike]: `%${filters.search}%` } },
+      { nama: { [Op.iLike]: `%${filters.search}%` } }, 
     ];
   }
 
   const offset = (page - 1) * limit;
 
-  const result = await ShiftKerja.findAndCountAll({
+  const result = await ShiftGroup.findAndCountAll({
     where,
     limit: parseInt(limit),
     offset: parseInt(offset),

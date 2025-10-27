@@ -7,7 +7,7 @@ import readRepository from '../../../repositories/master/kebijakanAbsensi/read.r
  * @returns {Object} List kebijakan absensi dengan metadata pagination
  */
 const readService = async (queryParams) => {
-  const { page, limit, is_aktif, search } = queryParams;
+  const { page = 1, limit = 20, is_aktif, search } = queryParams;
   
   // Build filter object
   const filters = {}; 

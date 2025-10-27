@@ -11,8 +11,7 @@ const hhmmss = Joi.string()
   .message("format jam harus HH:mm:ss");
 
 // Base fields
-const baseFields = {
-  kode_shift: Joi.string().max(10).trim().required(),
+const baseFields = { 
   nama: Joi.string().max(50).trim().required(),
   jam_masuk: hhmmss.required(),
   jam_pulang: hhmmss.required(),
@@ -24,8 +23,7 @@ const baseFields = {
   ).required(),
   jenis_shift: Joi.string()
     .valid(...JENIS_SHIFT)
-    .optional(),
-  is_umum: Joi.boolean().optional(),
+    .optional(), 
   toleransi_keterlambatan: Joi.number().integer().min(0).optional(),
   keterangan: Joi.string().allow(null, "").optional(),
   is_aktif: Joi.boolean().optional(),
@@ -48,8 +46,7 @@ const readSchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(20),
   jenis_shift: Joi.string()
     .valid(...JENIS_SHIFT)
-    .optional(),
-  is_umum: Joi.boolean().optional(),
+    .optional(), 
   is_aktif: Joi.boolean().optional(),
   q: Joi.string().max(100).optional().allow(""),
 });
