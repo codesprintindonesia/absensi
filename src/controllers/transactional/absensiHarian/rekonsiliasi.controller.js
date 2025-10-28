@@ -30,10 +30,7 @@ const rekonsiliasi = async (req, res) => {
       httpCode: mapErrorToStatusCode(error),
       message: formatErrorMessage(error),
       data: error.code === 'DUPLICATE_ABSENSI_DATA' ? {
-        tanggal: req.body.tanggal,
-        total_pegawai: error.totalPegawai,
-        jumlah_sudah_ada: error.jumlahSudahAda,
-        // pegawai_sudah_ada: error.pegawaiSudahAda
+        tanggal: error.tanggal
       } : null
     });
   }

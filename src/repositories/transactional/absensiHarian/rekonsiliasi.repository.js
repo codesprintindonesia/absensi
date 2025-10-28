@@ -8,8 +8,10 @@ import { ShiftKerja } from '../../../models/master/shiftKerja.model.js';
 import { LokasiKerja } from '../../../models/master/lokasiKerja.model.js';
 import { LokasiKerjaPegawai } from '../../../models/relational/lokasiKerjaPegawai.model.js';
 import { ProsesHarian } from '../../../models/system/prosesHarian.model.js';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { getSequelize } from '../../../libraries/database.instance.js';
+
+const sequelize = await getSequelize();
 
 /**
  * Ambil jadwal shift harian pegawai untuk tanggal tertentu
@@ -81,8 +83,7 @@ export const getShiftHarianByDate = async (tanggal, options = {}) => {
  * @param {Object} options - Sequelize options (termasuk transaction)
  * @returns {Array} Array of raw log absensi
  */
-export const getRawAbsensiByDate = async (tanggal, options = {}) => {
-  const sequelize = await getSequelize();
+export const getRawAbsensiByDate = async (tanggal, options = {}) => { 
   
   const logs = await LogRawAbsensi.findAll({
     where: {
@@ -229,3 +230,33 @@ export const insertLogProsesHarian = async (logData, options = {}) => {
   const result = await ProsesHarian.create(logData, options);
   return result.toJSON();
 };
+
+// ... existing functions ...
+
+/**
+ * Cek apakah tanggal tertentu sudah memiliki data absensi
+ * Menggunakan EXISTS untuk performance optimal
+ * 
+ * @param {string} tanggal - Tanggal dalam format YYYY-MM-DD
+ * @param {Object} options - Sequelize transaction options
+ * @returns {Promise<boolean>} True jika sudah ada data, false jika belum
+ */
+export const checkAbsensiExistsByDate = async (tanggal, options = {}) => {
+  const query = `
+    SELECT EXISTS (
+      SELECT 1 
+      FROM absensi.t_absensi_harian 
+      WHERE tanggal_absensi = :tanggal
+    ) as has_data
+  `;
+  
+  const [result] = await sequelize.query(query, {
+    replacements: { tanggal },
+    type: QueryTypes.SELECT,
+    ...options
+  });
+  
+  return result.has_data;
+};
+
+// ... existing exports ...

@@ -335,7 +335,6 @@ export const prosesRekonsiliasi = async (tanggal) => {
   const waktuMulai = new Date();
   let totalPegawai = 0;
   let totalBerhasil = 0;
-  const pegawaiSudahAda = [];
   const idProses = generateIdProses(tanggal);
   
   const transaction = await createTransaction({
@@ -360,43 +359,26 @@ export const prosesRekonsiliasi = async (tanggal) => {
     
     totalPegawai = shiftHarian.length;
     
-    // 2. PRE-CHECK: Cek semua pegawai apakah sudah ada data absensi
-    console.log(`[${new Date().toISOString()}] Pre-check ${totalPegawai} pegawai...`);
+    // 2. FAST CHECK: Apakah tanggal ini sudah ada data absensi?
+    console.log(`[${new Date().toISOString()}] Cek apakah tanggal ${tanggal} sudah memiliki data absensi...`);
     
-    for (const jadwal of shiftHarian) {
-      const exists = await rekonRepo.checkAbsensiExists(
-        jadwal.id_pegawai, 
-        tanggal, 
-        { transaction }
-      );
-      
-      if (exists) {
-        pegawaiSudahAda.push({
-          id_pegawai: jadwal.id_pegawai,
-          nama_pegawai: jadwal.nama_pegawai,
-          id_personal: jadwal.id_personal
-        });
-      }
-    }
+    const hasData = await rekonRepo.checkAbsensiExistsByDate(tanggal, { transaction });
     
-    // 3. Jika ada pegawai yang sudah punya data, throw error
-    if (pegawaiSudahAda.length > 0) {
-      console.log(`[${new Date().toISOString()}] Ditemukan ${pegawaiSudahAda.length} pegawai yang sudah memiliki data`);
+    if (hasData) {
+      console.log(`[${new Date().toISOString()}] Data absensi untuk tanggal ${tanggal} sudah ada`);
       
-      const error = new Error('Rekonsiliasi tidak dapat dilanjutkan karena ada pegawai yang sudah memiliki data absensi');
+      const error = new Error(`Data absensi untuk tanggal ${tanggal} sudah ada. Gunakan koreksi absensi jika perlu mengubah data.`);
       error.code = 'DUPLICATE_ABSENSI_DATA';
-      error.pegawaiSudahAda = pegawaiSudahAda;
-      error.totalPegawai = totalPegawai;
-      error.jumlahSudahAda = pegawaiSudahAda.length;
+      error.tanggal = tanggal;
       throw error;
     }
     
-    console.log(`[${new Date().toISOString()}] Pre-check OK - Lanjut proses`);
+    console.log(`[${new Date().toISOString()}] Tanggal ${tanggal} belum ada data - Lanjut proses`);
     
-    // 4. Group logs by pegawai
+    // 3. Group logs by pegawai
     const logsByPegawai = groupLogsByPegawai(rawLogs);
     
-    // 5. Proses setiap pegawai
+    // 4. Proses setiap pegawai
     for (const jadwal of shiftHarian) {
       const lokasiPegawai = await rekonRepo.getLokasiKerjaPegawai(
         jadwal.id_pegawai, 
@@ -419,7 +401,7 @@ export const prosesRekonsiliasi = async (tanggal) => {
       console.log(`[${new Date().toISOString()}] ✓ Berhasil: ${jadwal.nama_pegawai}`);
     }
     
-    // 6. Log hasil proses
+    // 5. Log hasil proses
     const waktuSelesai = new Date();
     const durasiDetik = Math.floor((waktuSelesai - waktuMulai) / 1000);
     
@@ -471,10 +453,14 @@ export const prosesRekonsiliasi = async (tanggal) => {
         waktu_selesai: waktuSelesai,
         total_data_diproses: totalPegawai,
         jumlah_success: 0,
-        jumlah_error: error.code === 'DUPLICATE_ABSENSI_DATA' ? pegawaiSudahAda.length : totalPegawai,
-        detail_error: JSON.stringify(error.stack),
+        jumlah_error: totalPegawai,
+        detail_error: JSON.stringify(
+          error.code === 'DUPLICATE_ABSENSI_DATA' 
+            ? { alasan: 'Data absensi sudah ada', tanggal }
+            : { error: error.message, stack: error.stack }
+        ),
         catatan: error.code === 'DUPLICATE_ABSENSI_DATA'
-          ? `Rekonsiliasi dibatalkan karena ${pegawaiSudahAda.length} dari ${totalPegawai} pegawai sudah memiliki data.`
+          ? `Rekonsiliasi dibatalkan karena data absensi untuk tanggal ${tanggal} sudah ada.`
           : `Error: ${error.message}. Durasi: ${durasiDetik} detik.`
       });
     } catch (logError) {

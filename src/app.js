@@ -1,14 +1,13 @@
-
 import { httpServer, httpPort } from "./servers/http.server.js";
 import { validateEnv } from "./validations/env.validation.js";
-import chalk from "chalk";
+import chalk from "chalk";  
 
 // Validate environment variables first
 try {
   const validEnv = validateEnv();
   console.log(chalk.green("✓ Environment variables validated"));
   console.log(`DATABASE: ${validEnv.DATABASE}`);
-  console.log(`PORT: ${validEnv.PORT}`);
+  console.log(`PORT: ${validEnv.PORT}`); 
 } catch (error) {
   console.error(chalk.red("❌ Environment validation failed:"), error.message);
   process.exit(1);
