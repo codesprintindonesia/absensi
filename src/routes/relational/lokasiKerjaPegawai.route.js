@@ -5,12 +5,12 @@ import {
   updateSchema,
   readSchema,
   paramsSchema,
-} from "../../validations/relational/pegawaiLokasiKerja.validation.js";
-import createController from "../../controllers/relational/pegawaiLokasiKerja/create.controller.js";
-import readController from "../../controllers/relational/pegawaiLokasiKerja/read.controller.js";
-import getByIdController from "../../controllers/relational/pegawaiLokasiKerja/getById.controller.js";
-import updateController from "../../controllers/relational/pegawaiLokasiKerja/update.controller.js";
-import deleteController from "../../controllers/relational/pegawaiLokasiKerja/delete.controller.js";
+} from "../../validations/relational/lokasiKerjaPegawai.validation.js";
+import createController from "../../controllers/relational/lokasiKerjaPegawai/create.controller.js";
+import readController from "../../controllers/relational/lokasiKerjaPegawai/read.controller.js";
+import getByIdController from "../../controllers/relational/lokasiKerjaPegawai/getById.controller.js";
+import updateController from "../../controllers/relational/lokasiKerjaPegawai/update.controller.js";
+import deleteController from "../../controllers/relational/lokasiKerjaPegawai/delete.controller.js";
 
 const router = Router();
 

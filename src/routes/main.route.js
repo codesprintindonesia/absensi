@@ -10,7 +10,7 @@ import shiftPegawaiRoutes from './relational/shiftPegawai.route.js';
 import logRawAbsensiRoutes from './transactional/logRawAbsensi.route.js';
 import jobRoutes from "./job.route.js";
 import hariLiburRoutes from './master/hariLibur.route.js';
-import pegawaiLokasiKerjaRoutes from './relational/pegawaiLokasiKerja.route.js';
+import lokasiKerjaPegawaiRoutes from './relational/lokasiKerjaPegawai.route.js';
 import shiftHarianPegawaiRoutes from './transactional/shiftHarianPegawai.route.js';
 
 const router = Router();
@@ -26,7 +26,7 @@ router.use('/shift-pegawai', shiftPegawaiRoutes);
 router.use('/log-raw-absensi', logRawAbsensiRoutes);
 router.use("/jobs", jobRoutes);
 router.use("/hari-libur", hariLiburRoutes);
-router.use("/pegawai-lokasi-kerja", pegawaiLokasiKerjaRoutes);
+router.use("/lokasi-kerja-pegawai", lokasiKerjaPegawaiRoutes);
 router.use("/shift-harian-pegawai", shiftHarianPegawaiRoutes);
 
 // Error handler middleware (harus di akhir) 

@@ -1,4 +1,4 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/pegawaiLokasiKerja.model.js";
+import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const updateRepository = async (id, updateData, options = {}) => {
   const [updatedCount, updatedRows] = await PegawaiLokasiKerja.update(updateData, {
@@ -7,7 +7,7 @@ const updateRepository = async (id, updateData, options = {}) => {
     ...options,
   });
   if (updatedCount === 0) {
-    throw new Error("PEGAWAI_LOKASI_KERJA_NOT_FOUND");
+    throw new Error("LOKASI_KERJA_PEGAWAI_NOT_FOUND");
   }
   return updatedRows[0].toJSON();
 };

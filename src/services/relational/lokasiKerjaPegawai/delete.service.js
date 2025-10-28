@@ -1,11 +1,11 @@
-import deleteRepository from "../../../repositories/relational/pegawaiLokasiKerja/delete.repository.js";
-import findByIdRepository from "../../../repositories/relational/pegawaiLokasiKerja/findById.repository.js";
+import deleteRepository from "../../../repositories/relational/lokasiKerjaPegawai/delete.repository.js";
+import findByIdRepository from "../../../repositories/relational/lokasiKerjaPegawai/findById.repository.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const deleteService = async (id, deletedBy = "SYSTEM") => {
   const existing = await findByIdRepository(id);
   if (!existing) {
-    const error = new Error("PEGAWAI_LOKASI_KERJA_NOT_FOUND");
+    const error = new Error("LOKASI_KERJA_PEGAWAI_NOT_FOUND");
     error.statusCode = HTTP_STATUS.NOT_FOUND;
     throw error;
   }

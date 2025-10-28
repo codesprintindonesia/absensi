@@ -1,4 +1,4 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/pegawaiLokasiKerja.model.js";
+import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const findById = async (id, options = {}) => {
   const row = await PegawaiLokasiKerja.findByPk(id, options);

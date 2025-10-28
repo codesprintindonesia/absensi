@@ -1,4 +1,4 @@
-import readRepository from "../../../repositories/relational/pegawaiLokasiKerja/read.repository.js";
+import readRepository from "../../../repositories/relational/lokasiKerjaPegawai/read.repository.js";
 
 const readService = async (queryParams) => {
   const {

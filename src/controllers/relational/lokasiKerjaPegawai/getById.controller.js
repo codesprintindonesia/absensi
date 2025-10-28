@@ -1,16 +1,16 @@
 import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
-import readService from "../../../services/relational/pegawaiLokasiKerja/read.service.js";
+import getById from "../../../services/relational/lokasiKerjaPegawai/getById.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
-const readController = async (req, res) => {
+const getByIdController = async (req, res) => {
   try {
-    const result = await readService(req.query);
+    const { id } = req.params;
+    const detail = await getById(id);
     return sendResponse(res, {
       code: HTTP_STATUS.OK,
-      message: "OK",
-      data: result.items,
-      metadata: result.metadata,
+      message: "Success",
+      data: detail,
     });
   } catch (error) {
     return sendResponse(res, {
@@ -20,4 +20,4 @@ const readController = async (req, res) => {
   }
 };
 
-export default readController;
+export default getByIdController;

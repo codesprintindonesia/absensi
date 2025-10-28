@@ -126,7 +126,7 @@ const processShiftForPegawai = async ({
 }) => {
   // Get lokasi kerja dengan prioritas terkecil
   const lokasi = await sequelize.query(
-    `SELECT * FROM absensi.r_pegawai_lokasi_kerja 
+    `SELECT * FROM absensi.r_lokasi_kerja_pegawai 
      WHERE id_pegawai = :idPegawai AND is_active = true 
      ORDER BY prioritas_lokasi ASC LIMIT 1`,
     {

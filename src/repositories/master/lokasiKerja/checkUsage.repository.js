@@ -12,11 +12,11 @@ const sequelize = await getSequelize();
 
 const checkUsage = async (lokasiKerjaId, options = {}) => {
   try {
-    // Check t_pegawai_lokasi_kerja (ON DELETE RESTRICT - akan error jika ada)
+    // Check t_lokasi_kerja_pegawai (ON DELETE RESTRICT - akan error jika ada)
     const [pegawaiLokasiResults] = await sequelize.query(
       `
       SELECT COUNT(*) as count 
-      FROM absensi.t_pegawai_lokasi_kerja 
+      FROM absensi.t_lokasi_kerja_pegawai 
       WHERE id_lokasi_kerja = :lokasiKerjaId
     `,
       {
@@ -74,7 +74,7 @@ const checkUsage = async (lokasiKerjaId, options = {}) => {
     return {
       canDelete: pegawaiCount === 0, // Hanya bisa delete jika tidak ada pegawai assigned
       blockingReferences: {
-        pegawai_lokasi_kerja: pegawaiCount,
+        lokasi_kerja_pegawai: pegawaiCount,
       },
       affectedReferences: {
         absensi_harian: absensiCount,

@@ -1,4 +1,4 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/pegawaiLokasiKerja.model.js";
+import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const readRepository = async (params, options = {}) => {
   const { page, limit, filters = {}, orderBy } = params;

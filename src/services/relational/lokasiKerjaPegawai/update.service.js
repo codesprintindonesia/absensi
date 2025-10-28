@@ -1,14 +1,14 @@
-// src/services/relational/pegawaiLokasiKerja/update.service.js
-import updateRepository from "../../../repositories/relational/pegawaiLokasiKerja/update.repository.js";
-import findByIdRepository from "../../../repositories/relational/pegawaiLokasiKerja/findById.repository.js";
-import readRepository from "../../../repositories/relational/pegawaiLokasiKerja/read.repository.js";
+// src/services/relational/lokasiKerjaPegawai/update.service.js
+import updateRepository from "../../../repositories/relational/lokasiKerjaPegawai/update.repository.js";
+import findByIdRepository from "../../../repositories/relational/lokasiKerjaPegawai/findById.repository.js";
+import readRepository from "../../../repositories/relational/lokasiKerjaPegawai/read.repository.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const updateService = async (id, updateData, updatedBy = "SYSTEM") => {
   // pastikan data ada
   const existing = await findByIdRepository(id);
   if (!existing) {
-    const error = new Error("PEGAWAI_LOKASI_KERJA_NOT_FOUND");
+    const error = new Error("LOKASI_KERJA_PEGAWAI_NOT_FOUND");
     error.statusCode = HTTP_STATUS.NOT_FOUND;
     throw error;
   }

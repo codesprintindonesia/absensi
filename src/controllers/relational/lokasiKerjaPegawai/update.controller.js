@@ -1,6 +1,6 @@
 import { formatErrorMessage, mapErrorToStatusCode } from "../../../helpers/error.helper.js";
 import { sendResponse } from "../../../helpers/response.helper.js";
-import updateService from "../../../services/relational/pegawaiLokasiKerja/update.service.js";
+import updateService from "../../../services/relational/lokasiKerjaPegawai/update.service.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const updateController = async (req, res) => {

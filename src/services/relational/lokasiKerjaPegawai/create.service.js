@@ -1,5 +1,5 @@
-import createRepository from "../../../repositories/relational/pegawaiLokasiKerja/create.repository.js";
-import readRepository from "../../../repositories/relational/pegawaiLokasiKerja/read.repository.js";
+import createRepository from "../../../repositories/relational/lokasiKerjaPegawai/create.repository.js";
+import readRepository from "../../../repositories/relational/lokasiKerjaPegawai/read.repository.js";
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 const createService = async (data) => { 

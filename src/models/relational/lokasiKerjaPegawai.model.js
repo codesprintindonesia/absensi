@@ -1,4 +1,4 @@
-// src/models/relational/pegawaiLokasiKerja.model.js
+// src/models/relational/lokasiKerjaPegawai.model.js
 import { DataTypes } from "sequelize";
 import { getSequelize } from "../../libraries/database.instance.js";
 
@@ -62,12 +62,12 @@ const PegawaiLokasiKerja = sequelize.define(
   },
   {
     schema: "absensi",
-    tableName: "r_pegawai_lokasi_kerja",
+    tableName: "r_lokasi_kerja_pegawai",
     modelName: "PegawaiLokasiKerja",
     freezeTableName: true,
     timestamps: false, // trigger DB yang mengurus updated_at
     indexes: [
-      // CREATE INDEX idx_pegawai_lokasi_aktif ON absensi.r_pegawai_lokasi_kerja (id_pegawai, is_active, tanggal_mulai_berlaku, tanggal_akhir_berlaku)
+      // CREATE INDEX idx_pegawai_lokasi_aktif ON absensi.r_lokasi_kerja_pegawai (id_pegawai, is_active, tanggal_mulai_berlaku, tanggal_akhir_berlaku)
       {
         name: "idx_pegawai_lokasi_aktif",
         fields: [
@@ -76,7 +76,7 @@ const PegawaiLokasiKerja = sequelize.define(
           "tanggal_akhir_berlaku",
         ], // NOTE: jika ingin persis seperti DDL 
       },
-      // CREATE INDEX idx_pegawai_lokasi_prioritas ON absensi.r_pegawai_lokasi_kerja (id_pegawai, prioritas_lokasi 
+      // CREATE INDEX idx_pegawai_lokasi_prioritas ON absensi.r_lokasi_kerja_pegawai (id_pegawai, prioritas_lokasi 
       {
         name: "idx_pegawai_lokasi_prioritas",
         fields: ["id_pegawai", "prioritas_lokasi"],
