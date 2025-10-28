@@ -1,4 +1,4 @@
-import  HTTP_STATUS from "../constants/httpStatus.constant.js";
+import HTTP_STATUS from "../constants/httpStatus.constant.js";
 
 export function formatErrorMessage(error) {
   // Ambil pesan detail dari Postgres lewat Sequelize
@@ -14,6 +14,11 @@ export function formatErrorMessage(error) {
 
 // Helper untuk mapping error ke status code
 export function mapErrorToStatusCode(error) {
+  // Custom error codes
+  if (error.code === "DUPLICATE_ABSENSI_DATA") return HTTP_STATUS.CONFLICT;
+  if (error.code === "NOT_FOUND") return HTTP_STATUS.NOT_FOUND;
+  
+  // Sequelize errors
   if (error.name === "SequelizeUniqueConstraintError")
     return HTTP_STATUS.CONFLICT;
   if (
@@ -22,8 +27,11 @@ export function mapErrorToStatusCode(error) {
   )
     return HTTP_STATUS.INTERNAL_ERROR;
   if (error.name === "SequelizeValidationError") return HTTP_STATUS.BAD_REQUEST;
+  
+  // Check if error has statusCode property
   if (error.statusCode && Object.values(HTTP_STATUS).includes(error.statusCode))
     return error.statusCode;
-  if (error.code === "NOT_FOUND") return HTTP_STATUS.NOT_FOUND;
-  return HTTP_STATUS.INTERNAL_ERROR; // fallback
+  
+  // Default fallback
+  return HTTP_STATUS.INTERNAL_ERROR;
 }

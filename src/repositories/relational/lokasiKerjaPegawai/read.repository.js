@@ -1,4 +1,4 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
+import { LokasiKerjaPegawai } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const readRepository = async (params, options = {}) => {
   const { page, limit, filters = {}, orderBy } = params;
@@ -13,7 +13,7 @@ const readRepository = async (params, options = {}) => {
 
   const offset = (page - 1) * limit;
 
-  const result = await PegawaiLokasiKerja.findAndCountAll({
+  const result = await LokasiKerjaPegawai.findAndCountAll({
     where,
     limit: parseInt(limit),
     offset: parseInt(offset),

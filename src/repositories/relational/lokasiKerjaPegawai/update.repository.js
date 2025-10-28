@@ -1,7 +1,7 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
+import { LokasiKerjaPegawai } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const updateRepository = async (id, updateData, options = {}) => {
-  const [updatedCount, updatedRows] = await PegawaiLokasiKerja.update(updateData, {
+  const [updatedCount, updatedRows] = await LokasiKerjaPegawai.update(updateData, {
     where: { id },
     returning: true,
     ...options,

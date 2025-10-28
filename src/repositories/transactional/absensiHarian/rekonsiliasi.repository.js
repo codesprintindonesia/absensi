@@ -1,197 +1,231 @@
 // src/repositories/transactional/absensiHarian/rekonsiliasi.repository.js
-// import pool from "../../../config/database.js";
-import { getSequelize } from "../../../libraries/database.instance.js";
 
-const pool = await getSequelize();
+import { AbsensiHarian } from '../../../models/transactional/absensiHarian.model.js';
+import { ShiftHarianPegawai } from '../../../models/transactional/shiftHarianPegawai.model.js';
+import { LogRawAbsensi } from '../../../models/transactional/logRawAbsensi.model.js';
+import { KebijakanAbsensi } from '../../../models/master/kebijakanAbsensi.model.js';
+import { ShiftKerja } from '../../../models/master/shiftKerja.model.js';
+import { LokasiKerja } from '../../../models/master/lokasiKerja.model.js';
+import { LokasiKerjaPegawai } from '../../../models/relational/lokasiKerjaPegawai.model.js';
+import { ProsesHarian } from '../../../models/system/prosesHarian.model.js';
+import { Op } from 'sequelize';
+import { getSequelize } from '../../../libraries/database.instance.js';
 
 /**
  * Ambil jadwal shift harian pegawai untuk tanggal tertentu
+ * Menggunakan Sequelize Model dengan include (100% Model-based)
+ * 
+ * @param {string} tanggal - Tanggal dalam format YYYY-MM-DD
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {Array} Array of shift harian dengan detail shift dan lokasi
  */
-export const getShiftHarianByDate = async (tanggal) => {
-  const query = `
-    SELECT 
-      tsp.id,
-      tsp.id_pegawai,
-      tsp.tanggal_kerja,
-      tsp.id_shift_kerja_final as id_shift_kerja,
-      tsp.id_lokasi_kerja_final as id_lokasi_kerja,
-      tsp.nama_pegawai,
-      tsp.id_personal,
-      sk.nama as nama_shift,
-      sk.jam_masuk,
-      sk.jam_pulang,
-      sk.durasi_istirahat,
-      sk.toleransi_keterlambatan,
-      lk.nama as nama_lokasi,
-      lk.kode_referensi as kode_lokasi
-    FROM absensi.t_shift_harian_pegawai tsp
-    INNER JOIN absensi.m_shift_kerja sk ON tsp.id_shift_kerja_final = sk.id
-    INNER JOIN absensi.m_lokasi_kerja lk ON tsp.id_lokasi_kerja_final = lk.id
-    WHERE tsp.tanggal_kerja = $1
-    ORDER BY tsp.id_pegawai
-  `;
-  
-  const result = await pool.query(query, [tanggal]);
-  return result.rows;
+export const getShiftHarianByDate = async (tanggal, options = {}) => {
+  const shiftHarian = await ShiftHarianPegawai.findAll({
+    where: { tanggal_kerja: tanggal },
+    include: [
+      {
+        model: ShiftKerja,
+        as: 'shiftKerja',
+        required: true,
+        attributes: [
+          'id',
+          'nama',
+          'jam_masuk',
+          'jam_pulang',
+          'durasi_istirahat',
+          'toleransi_keterlambatan'
+        ]
+      },
+      {
+        model: LokasiKerja,
+        as: 'lokasiKerja',
+        required: false,
+        attributes: [
+          'id',
+          'nama',
+          'kode_referensi'
+        ]
+      }
+    ],
+    order: [['id_pegawai', 'ASC']],
+    ...options
+  });
+
+  // Transform ke format yang dibutuhkan service
+  return shiftHarian.map(sh => {
+    const json = sh.toJSON();
+    return {
+      id: json.id,
+      id_pegawai: json.id_pegawai,
+      tanggal_kerja: json.tanggal_kerja,
+      id_shift_kerja: json.id_shift_kerja_final,
+      id_lokasi_kerja: json.id_lokasi_kerja_final,
+      nama_pegawai: json.nama_pegawai,
+      id_personal: json.id_personal,
+      nama_shift: json.shiftKerja?.nama,
+      jam_masuk: json.shiftKerja?.jam_masuk,
+      jam_pulang: json.shiftKerja?.jam_pulang,
+      durasi_istirahat: json.shiftKerja?.durasi_istirahat,
+      toleransi_keterlambatan: json.shiftKerja?.toleransi_keterlambatan,
+      nama_lokasi: json.lokasiKerja?.nama,
+      kode_lokasi: json.lokasiKerja?.kode_referensi
+    };
+  });
 };
 
 /**
  * Ambil raw log absensi untuk tanggal tertentu
+ * Menggunakan Sequelize Model dengan date filtering
+ * 
+ * @param {string} tanggal - Tanggal dalam format YYYY-MM-DD
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {Array} Array of raw log absensi
  */
-export const getRawAbsensiByDate = async (tanggal) => {
-  const query = `
-    SELECT 
-      id, 
-      id_pegawai, 
-      waktu_log,
-      id_lokasi_kerja,
-      koordinat_gps,
-      source_absensi,
-      keterangan_log
-    FROM absensi.t_log_raw_absensi
-    WHERE DATE(waktu_log) = $1
-    ORDER BY id_pegawai, waktu_log ASC
-  `;
+export const getRawAbsensiByDate = async (tanggal, options = {}) => {
+  const sequelize = await getSequelize();
   
-  const result = await pool.query(query, [tanggal]);
-  return result.rows;
+  const logs = await LogRawAbsensi.findAll({
+    where: {
+      [Op.and]: [
+        sequelize.where(
+          sequelize.fn('DATE', sequelize.col('waktu_log')),
+          tanggal
+        ),
+        { status_validasi: 'VALID' }
+      ]
+    },
+    attributes: [
+      'id',
+      'id_pegawai',
+      'waktu_log',
+      'id_lokasi_kerja',
+      'koordinat_gps',
+      'source_absensi',
+      'keterangan_log'
+    ],
+    order: [
+      ['id_pegawai', 'ASC'],
+      ['waktu_log', 'ASC']
+    ],
+    ...options
+  });
+
+  return logs.map(log => log.toJSON());
 };
 
 /**
- * Ambil kebijakan absensi yang aktif
+ * Ambil kebijakan absensi yang aktif dan default
+ * Menggunakan Sequelize Model
+ * 
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {Object|null} Kebijakan absensi atau null jika tidak ditemukan
  */
-export const getKebijakanAbsensiAktif = async () => {
-  const query = `
-    SELECT 
-      id,
-      nama,
-      toleransi_keterlambatan,
-      min_jam_kerja_full_day,
-      jam_cut_off_hari
-    FROM absensi.m_kebijakan_absensi
-    WHERE is_default = true 
-      AND is_active = true
-    LIMIT 1
-  `;
-  
-  const result = await pool.query(query);
-  return result.rows[0] || null;
+export const getKebijakanAbsensiAktif = async (options = {}) => {
+  const kebijakan = await KebijakanAbsensi.findOne({
+    where: {
+      is_default: true,
+      is_active: true
+    },
+    attributes: [
+      'id',
+      'nama',
+      'toleransi_keterlambatan',
+      'min_jam_kerja_full_day',
+      'jam_cut_off_hari'
+    ],
+    order: [['created_at', 'DESC']],
+    ...options
+  });
+
+  return kebijakan ? kebijakan.toJSON() : null;
 };
 
 /**
- * Ambil lokasi kerja pegawai yang aktif
+ * Ambil lokasi kerja pegawai yang aktif untuk tanggal tertentu
+ * Menggunakan Sequelize Model dengan include
+ * 
+ * @param {string} idPegawai - ID Pegawai
+ * @param {string} tanggal - Tanggal dalam format YYYY-MM-DD
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {Array} Array of lokasi kerja pegawai
  */
-export const getLokasiKerjaPegawai = async (idPegawai, tanggal) => {
-  const query = `
-    SELECT 
-      id_lokasi_kerja,
-      lk.nama as nama_lokasi,
-      lk.kode_referensi as kode_lokasi,
-      prioritas_lokasi
-    FROM absensi.r_lokasi_kerja_pegawai rlkp
-    INNER JOIN absensi.m_lokasi_kerja lk ON rlkp.id_lokasi_kerja = lk.id
-    WHERE rlkp.id_pegawai = $1
-      AND rlkp.is_active = true
-      AND rlkp.tanggal_mulai_berlaku <= $2
-      AND (rlkp.tanggal_akhir_berlaku IS NULL OR rlkp.tanggal_akhir_berlaku >= $2)
-    ORDER BY prioritas_lokasi ASC
-  `;
-  
-  const result = await pool.query(query, [idPegawai, tanggal]);
-  return result.rows;
+export const getLokasiKerjaPegawai = async (idPegawai, tanggal, options = {}) => {
+  const lokasi = await LokasiKerjaPegawai.findAll({
+    where: {
+      id_pegawai: idPegawai,
+      is_active: true,
+      tanggal_mulai_berlaku: { [Op.lte]: tanggal },
+      [Op.or]: [
+        { tanggal_akhir_berlaku: null },
+        { tanggal_akhir_berlaku: { [Op.gte]: tanggal } }
+      ]
+    },
+    include: [
+      {
+        model: LokasiKerja,
+        as: 'lokasiKerja',
+        required: true,
+        attributes: ['id', 'nama', 'kode_referensi']
+      }
+    ],
+    order: [['prioritas_lokasi', 'ASC']],
+    ...options
+  });
+
+  return lokasi.map(lok => {
+    const json = lok.toJSON();
+    return {
+      id_lokasi_kerja: json.id_lokasi_kerja,
+      nama_lokasi: json.lokasiKerja?.nama,
+      kode_lokasi: json.lokasiKerja?.kode_referensi,
+      prioritas_lokasi: json.prioritas_lokasi
+    };
+  });
 };
 
 /**
  * Cek apakah data absensi sudah ada untuk pegawai di tanggal tertentu
+ * Menggunakan Sequelize Model count
+ * 
+ * @param {string} idPegawai - ID Pegawai
+ * @param {string} tanggal - Tanggal dalam format YYYY-MM-DD
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {boolean} True jika sudah ada
  */
-export const checkAbsensiExists = async (idPegawai, tanggal) => {
-  const query = `
-    SELECT id 
-    FROM absensi.t_absensi_harian
-    WHERE id_pegawai = $1 AND tanggal_absensi = $2
-  `;
-  
-  const result = await pool.query(query, [idPegawai, tanggal]);
-  return result.rows.length > 0;
+export const checkAbsensiExists = async (idPegawai, tanggal, options = {}) => {
+  const count = await AbsensiHarian.count({
+    where: {
+      id_pegawai: idPegawai,
+      tanggal_absensi: tanggal
+    },
+    ...options
+  });
+
+  return count > 0;
 };
 
 /**
  * Insert data absensi harian baru
+ * Menggunakan Sequelize Model create
+ * 
+ * @param {Object} absensiData - Data absensi harian
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {Object} Data absensi yang baru dibuat
  */
-export const insertAbsensiHarian = async (absensiData) => {
-  const query = `
-    INSERT INTO absensi.t_absensi_harian (
-      id, id_pegawai, tanggal_absensi, id_shift_kerja, id_lokasi_kerja_digunakan,
-      jam_masuk_jadwal, jam_pulang_jadwal, jam_masuk_aktual, jam_pulang_aktual,
-      id_log_masuk, id_log_pulang, status_kehadiran, menit_keterlambatan,
-      menit_pulang_cepat, total_jam_kerja_efektif, jam_lembur_dihitung, 
-      tanggal_kerja_efektif, is_shift_lintas_hari, id_kebijakan_absensi, 
-      catatan_khusus, is_data_final, nama_pegawai, id_personal
-    ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, 
-      $17, $18, $19, $20, $21, $22, $23
-    )
-    RETURNING *
-  `;
-  
-  const values = [
-    absensiData.id,
-    absensiData.id_pegawai,
-    absensiData.tanggal_absensi,
-    absensiData.id_shift_kerja,
-    absensiData.id_lokasi_kerja_digunakan,
-    absensiData.jam_masuk_jadwal,
-    absensiData.jam_pulang_jadwal,
-    absensiData.jam_masuk_aktual,
-    absensiData.jam_pulang_aktual,
-    absensiData.id_log_masuk,
-    absensiData.id_log_pulang,
-    absensiData.status_kehadiran,
-    absensiData.menit_keterlambatan,
-    absensiData.menit_pulang_cepat,
-    absensiData.total_jam_kerja_efektif,
-    absensiData.jam_lembur_dihitung,
-    absensiData.tanggal_kerja_efektif,
-    absensiData.is_shift_lintas_hari,
-    absensiData.id_kebijakan_absensi,
-    absensiData.catatan_khusus,
-    absensiData.is_data_final,
-    absensiData.nama_pegawai,
-    absensiData.id_personal
-  ];
-  
-  const result = await pool.query(query, values);
-  return result.rows[0];
+export const insertAbsensiHarian = async (absensiData, options = {}) => {
+  const result = await AbsensiHarian.create(absensiData, options);
+  return result.toJSON();
 };
 
 /**
  * Insert log proses harian
+ * Menggunakan Sequelize Model create
+ * 
+ * @param {Object} logData - Data log proses harian
+ * @param {Object} options - Sequelize options (termasuk transaction)
+ * @returns {Object} Data log yang baru dibuat
  */
-export const insertLogProsesHarian = async (logData) => {
-  const query = `
-    INSERT INTO absensi.s_proses_harian (
-      id, tanggal_proses, jenis_proses, status_proses, waktu_mulai, waktu_selesai,
-      total_data_diproses, jumlah_success, jumlah_error, detail_error, catatan
-    ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
-    )
-    RETURNING *
-  `;
-  
-  const values = [
-    logData.id,
-    logData.tanggal_proses,
-    logData.jenis_proses,
-    logData.status_proses,
-    logData.waktu_mulai,
-    logData.waktu_selesai,
-    logData.total_data_diproses,
-    logData.jumlah_success,
-    logData.jumlah_error,
-    logData.detail_error,
-    logData.catatan
-  ];
-  
-  const result = await pool.query(query, values);
-  return result.rows[0];
+export const insertLogProsesHarian = async (logData, options = {}) => {
+  const result = await ProsesHarian.create(logData, options);
+  return result.toJSON();
 };

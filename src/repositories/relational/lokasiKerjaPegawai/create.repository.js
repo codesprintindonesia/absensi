@@ -1,7 +1,7 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
+import { LokasiKerjaPegawai } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const createRepository = async (data, options = {}) => {
-  const row = await PegawaiLokasiKerja.create(data, options);
+  const row = await LokasiKerjaPegawai.create(data, options);
   return row.toJSON();
 };
 

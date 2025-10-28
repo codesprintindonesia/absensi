@@ -1,7 +1,7 @@
-import { PegawaiLokasiKerja } from "../../../models/relational/lokasiKerjaPegawai.model.js";
+import { LokasiKerjaPegawai } from "../../../models/relational/lokasiKerjaPegawai.model.js";
 
 const deleteRepository = async (id, options = {}) => {
-  const deletedCount = await PegawaiLokasiKerja.destroy({
+  const deletedCount = await LokasiKerjaPegawai.destroy({
     where: { id },
     ...options,
   });

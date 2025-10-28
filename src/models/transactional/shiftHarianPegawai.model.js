@@ -1,4 +1,4 @@
-// src//models/transactional/shiftHarianPegawai.model.js
+// src/models/transactional/shiftHarianPegawai.model.js
 import { DataTypes } from "sequelize";
 import { getSequelize } from "../../libraries/database.instance.js";
 
@@ -8,7 +8,7 @@ const ShiftHarianPegawai = sequelize.define(
   "ShiftHarianPegawai",
   {
     id: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(18),
       allowNull: false,
       primaryKey: true,
     },
@@ -20,18 +20,26 @@ const ShiftHarianPegawai = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    id_shift_kerja_jadwal: {
+    id_shift_kerja_original: {
       type: DataTypes.STRING(8),
       allowNull: false,
+      comment: "Shift dari jadwal awal"
     },
-    id_shift_kerja_aktual: {
+    id_shift_kerja_final: {
       type: DataTypes.STRING(8),
-      allowNull: true,
+      allowNull: false,
+      comment: "Shift yang digunakan untuk rekonsiliasi"
     },
-    id_lokasi_kerja_aktual: {
+    id_lokasi_kerja_original: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      comment: "Lokasi dari jadwal awal"
+    },
+    id_lokasi_kerja_final: {
       type: DataTypes.STRING(8),
-      allowNull: true,
-    }, 
+      allowNull: false,
+      comment: "Lokasi yang digunakan untuk rekonsiliasi"
+    },
     id_pegawai_pengganti: {
       type: DataTypes.STRING(10),
       allowNull: true,
@@ -39,7 +47,28 @@ const ShiftHarianPegawai = sequelize.define(
     alasan_perubahan: {
       type: DataTypes.TEXT,
       allowNull: true,
-    }, 
+    },
+    // Denormalized fields
+    nama_pegawai: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "Denormalized dari master pegawai"
+    },
+    nama_pengganti: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "Nama pegawai pengganti"
+    },
+    id_personal: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: "Denormalized dari master pegawai"
+    },
+    id_personal_pengganti: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: "ID personal pegawai pengganti"
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: true,

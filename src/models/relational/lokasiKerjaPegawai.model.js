@@ -5,9 +5,9 @@ import { getSequelize } from "../../libraries/database.instance.js";
 // dapatkan instance sequelize
 const sequelize = await getSequelize();  
 
-// Definisi model PegawaiLokasiKerja
-const PegawaiLokasiKerja = sequelize.define(
-  "PegawaiLokasiKerja",
+// Definisi model LokasiKerjaPegawai
+const LokasiKerjaPegawai = sequelize.define(
+  "LokasiKerjaPegawai",
   {
     id: {
       type: DataTypes.STRING(25),
@@ -63,7 +63,7 @@ const PegawaiLokasiKerja = sequelize.define(
   {
     schema: "absensi",
     tableName: "r_lokasi_kerja_pegawai",
-    modelName: "PegawaiLokasiKerja",
+    modelName: "LokasiKerjaPegawai",
     freezeTableName: true,
     timestamps: false, // trigger DB yang mengurus updated_at
     indexes: [
@@ -85,4 +85,4 @@ const PegawaiLokasiKerja = sequelize.define(
   }
 );
 
-export { PegawaiLokasiKerja };
+export { LokasiKerjaPegawai };
