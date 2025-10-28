@@ -1,34 +1,58 @@
 import { httpServer, httpPort } from "./servers/http.server.js";
 import { validateEnv } from "./validations/env.validation.js";
-import chalk from "chalk";  
+import { initializeTracing } from "./configs/tracing.config.js";
+import chalk from "chalk";
+import { logger } from "./libraries/logger.library.js";
 
-// Validate environment variables first
+// ================================================================
+// STEP 1: Initialize OpenTelemetry FIRST (before any imports)
+// ================================================================
+const tracingSDK = initializeTracing();
+
+// ================================================================
+// STEP 2: Validate Environment
+// ================================================================
 try {
   const validEnv = validateEnv();
-  console.log(chalk.green("✓ Environment variables validated"));
-  console.log(`DATABASE: ${validEnv.DATABASE}`);
-  console.log(`PORT: ${validEnv.PORT}`); 
+  logger.info("Environment validated", {
+    // GANTI console.log
+    database: validEnv.DATABASE,
+    port: validEnv.PORT,
+    signoz: validEnv.SIGNOZ_ENABLED,
+  });
 } catch (error) {
-  console.error(chalk.red("❌ Environment validation failed:"), error.message);
+  logger.error("Environment validation failed", {
+    // GANTI console.error
+    error: error.message,
+  });
   process.exit(1);
 }
 
+// ================================================================
+// STEP 3: Start HTTP Server
+// ================================================================
 httpServer.listen(httpPort, "0.0.0.0", () => {
-  console.log(
-    chalk.blue(
-      `HTTP server listening on port ${httpPort} - ${process.env.NODE_ENV}`
-    )
-  );
-  console.log(chalk.blue(`Server accessible at: http://localhost:${httpPort}`));
-  console.log(chalk.blue(`Health check: http://localhost:${httpPort}/health`));
-
-  // Initialize reconciliation scheduler
-  try {
-    console.log(chalk.green("✓ Reconciliation scheduler initialized"));
-  } catch (error) {
-    console.error(
-      chalk.red("❌ Failed to initialize scheduler:"),
-      error.message
-    );
-  }
+  logger.info("HTTP server started", {
+    // GANTI console.log
+    port: httpPort,
+    env: process.env.NODE_ENV,
+  });
 });
+
+const shutdown = async (signal) => {
+  logger.info("Shutdown initiated", { signal });
+  
+  httpServer.close(() => {
+    logger.info("HTTP server closed");
+  });
+  
+  if (tracingSDK) {
+    await tracingSDK.shutdown();
+    logger.info("Tracing SDK shutdown complete");
+  }
+  
+  process.exit(0);
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
