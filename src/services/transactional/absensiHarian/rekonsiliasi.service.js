@@ -111,8 +111,8 @@ const generateAbsensiId = (idPegawai, tanggal) => {
 /**
  * Helper: Generate ID proses
  */
-const generateIdProses = (tanggal) => {
-  const dateStr = tanggal.replace(/-/g, '');
+const generateIdProses = (tanggal) => { 
+  const dateStr = String(tanggal).replace(/-/g, '');
   const timestamp = Date.now().toString().slice(-3);
   return `PRC-${dateStr}-${timestamp}`;
 };

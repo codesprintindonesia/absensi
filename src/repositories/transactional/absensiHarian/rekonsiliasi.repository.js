@@ -1,5 +1,8 @@
 // src/repositories/transactional/absensiHarian/rekonsiliasi.repository.js
-import pool from "../../../configs/database.config.js";
+// import pool from "../../../config/database.js";
+import { getSequelize } from "../../../libraries/database.instance.js";
+
+const pool = await getSequelize();
 
 /**
  * Ambil jadwal shift harian pegawai untuk tanggal tertentu
