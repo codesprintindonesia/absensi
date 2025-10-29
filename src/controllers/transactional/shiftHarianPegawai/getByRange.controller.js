@@ -1,9 +1,10 @@
 // src/controllers/transactional/shiftHarianPegawai/getByRange.controller.js
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
+import { sendResponse } from '../../../helpers/response.helper.js';
+import getByRangeShiftService from '../../../services/transactional/shiftHarianPegawai/getByRange.service.js';
+import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
-import getByRangeShiftService from "../../../services/transactional/shiftHarianPegawai/getByRange.service.js";
-import logger from "../../../utils/logger.utils.js";
-
-export const getByRangeController = async (req, res) => {
+const getByRangeController = async (req, res) => {
   try {
     const { id_pegawai, tanggal_mulai, tanggal_akhir } = req.query;
 
@@ -13,27 +14,16 @@ export const getByRangeController = async (req, res) => {
       tanggalAkhir: tanggal_akhir,
     });
 
-    return res.status(200).json({
-      code: 200,
+    return sendResponse(res, {
+      code: HTTP_STATUS.OK,
       message: result.message,
       data: result.data,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
+      metadata: result.metadata,
     });
   } catch (error) {
-    logger.error("[GetByRangeController] Error", {
-      error: error.message,
-      stack: error.stack,
-    });
-
-    return res.status(500).json({
-      code: 500,
-      message: error.message,
-      data: null,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
+    return sendResponse(res, {
+      code: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };

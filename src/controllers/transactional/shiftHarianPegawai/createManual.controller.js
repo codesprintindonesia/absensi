@@ -1,9 +1,10 @@
 // src/controllers/transactional/shiftHarianPegawai/createManual.controller.js
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
+import { sendResponse } from '../../../helpers/response.helper.js';
+import createManualShiftService from '../../../services/transactional/shiftHarianPegawai/createManual.service.js';
+import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
-import createManualShiftService from "../../../services/transactional/shiftHarianPegawai/createManual.service.js";
-import logger from "../../../utils/logger.utils.js";
-
-export const createManualController = async (req, res) => {
+const createManualController = async (req, res) => {
   try {
     const {
       id_pegawai,
@@ -31,27 +32,15 @@ export const createManualController = async (req, res) => {
       overwriteExisting: overwrite_existing || false,
     });
 
-    return res.status(201).json({
-      code: 201,
+    return sendResponse(res, {
+      code: HTTP_STATUS.CREATED,
       message: result.message,
       data: result.data,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
     });
   } catch (error) {
-    logger.error("[CreateManualController] Error", {
-      error: error.message,
-      stack: error.stack,
-    });
-
-    return res.status(500).json({
-      code: 500,
-      message: error.message,
-      data: null,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
+    return sendResponse(res, {
+      code: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };

@@ -1,9 +1,10 @@
 // src/controllers/transactional/shiftHarianPegawai/updateRange.controller.js
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
+import { sendResponse } from '../../../helpers/response.helper.js';
+import updateRangeShiftService from '../../../services/transactional/shiftHarianPegawai/updateRange.service.js';
+import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
-import updateRangeShiftService from "../../../services/transactional/shiftHarianPegawai/updateRange.service.js";
-import logger from "../../../utils/logger.utils.js";
-
-export const updateRangeController = async (req, res) => {
+const updateRangeController = async (req, res) => {
   try {
     const {
       id_pegawai,
@@ -27,27 +28,15 @@ export const updateRangeController = async (req, res) => {
       },
     });
 
-    return res.status(200).json({
-      code: 200,
+    return sendResponse(res, {
+      code: HTTP_STATUS.OK,
       message: result.message,
       data: result.data,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
     });
   } catch (error) {
-    logger.error("[UpdateRangeController] Error", {
-      error: error.message,
-      stack: error.stack,
-    });
-
-    return res.status(500).json({
-      code: 500,
-      message: error.message,
-      data: null,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
+    return sendResponse(res, {
+      code: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };

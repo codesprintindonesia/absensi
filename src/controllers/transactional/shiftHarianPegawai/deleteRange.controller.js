@@ -1,12 +1,12 @@
 // src/controllers/transactional/shiftHarianPegawai/deleteRange.controller.js
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
+import { sendResponse } from '../../../helpers/response.helper.js';
+import deleteRangeShiftService from '../../../services/transactional/shiftHarianPegawai/deleteRange.service.js';
+import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
-import deleteRangeShiftService from "../../../services/transactional/shiftHarianPegawai/deleteRange.service.js";
-import logger from "../../../utils/logger.utils.js";
-
-export const deleteRangeController = async (req, res) => {
+const deleteRangeController = async (req, res) => {
   try {
-    const { id_pegawai, tanggal_mulai, tanggal_akhir, alasan_hapus } =
-      req.body;
+    const { id_pegawai, tanggal_mulai, tanggal_akhir, alasan_hapus } = req.body;
 
     const result = await deleteRangeShiftService({
       idPegawai: id_pegawai,
@@ -15,27 +15,15 @@ export const deleteRangeController = async (req, res) => {
       alasanHapus: alasan_hapus,
     });
 
-    return res.status(200).json({
-      code: 200,
+    return sendResponse(res, {
+      code: HTTP_STATUS.OK,
       message: result.message,
       data: result.data,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
     });
   } catch (error) {
-    logger.error("[DeleteRangeController] Error", {
-      error: error.message,
-      stack: error.stack,
-    });
-
-    return res.status(500).json({
-      code: 500,
-      message: error.message,
-      data: null,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
+    return sendResponse(res, {
+      code: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };

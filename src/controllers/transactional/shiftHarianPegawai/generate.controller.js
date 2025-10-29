@@ -1,58 +1,31 @@
 // src/controllers/transactional/shiftHarianPegawai/generate.controller.js
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
+import { sendResponse } from '../../../helpers/response.helper.js';
+import generateShiftHarianPegawaiService from '../../../services/transactional/shiftHarianPegawai/generate.service.js';
+import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 
-import { generateShiftHarianPegawaiService } from "../../../services/transactional/shiftHarianPegawai/generate.service.js";
-import logger from "../../../utils/logger.utils.js";
-
-/**
- * Controller untuk generate shift harian pegawai
- * POST /api/transactional/shift-harian-pegawai/generate
- */
-export const generateShiftHarianPegawaiController = async (req, res) => {
+const generateShiftHarianPegawaiController = async (req, res) => {
   try {
     const { tanggal_mulai, tanggal_akhir, id_pegawai, mode } = req.body;
-
-    logger.info(
-      "[ShiftHarianGeneratorController] Request generate shift harian",
-      {
-        tanggal_mulai,
-        tanggal_akhir,
-        id_pegawai,
-      }
-    );
-
-    console.log("MODE", mode)
 
     const result = await generateShiftHarianPegawaiService({
       tanggalMulai: tanggal_mulai,
       tanggalAkhir: tanggal_akhir,
       idPegawai: id_pegawai,
-      mode: mode,
+      mode: mode || 'skip',
     });
 
-    return res.status(200).json({
-      code: 200,
+    return sendResponse(res, {
+      code: HTTP_STATUS.OK,
       message: result.message,
       data: result.data,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
     });
   } catch (error) {
-    logger.error(
-      "[ShiftHarianGeneratorController] Error generate shift harian",
-      {
-        error: error.message,
-        stack: error.stack,
-      }
-    );
-
-    return res.status(500).json({
-      code: 500,
-      message: error.message,
-      data: null,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
+    return sendResponse(res, {
+      code: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };
+
+export default generateShiftHarianPegawaiController;
