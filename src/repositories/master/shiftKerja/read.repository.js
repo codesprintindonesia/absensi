@@ -10,10 +10,7 @@ const read = async (params, options = {}) => {
   const { page, limit, filters, orderBy } = params;
 
   const where = {};
-
-  if (filters.jenis_shift) {
-    where.jenis_shift = filters.jenis_shift;
-  } 
+  
   if (filters.is_active !== undefined) {
     where.is_active = filters.is_active;
   }

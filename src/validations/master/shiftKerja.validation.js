@@ -1,6 +1,5 @@
 // src/validations/master/shiftKerja.validation.js
-import Joi from "joi";
-import { JENIS_SHIFT } from "../../models/master/shiftKerja.model.js";
+import Joi from "joi"; 
 
 // Skema id
 const idSchema = Joi.string().max(8).trim().required();
@@ -20,10 +19,7 @@ const baseFields = {
   hari_kerja: Joi.alternatives(
     Joi.array().items(Joi.number().integer().min(1).max(7)),
     Joi.object().unknown(true)
-  ).required(),
-  jenis_shift: Joi.string()
-    .valid(...JENIS_SHIFT)
-    .optional(), 
+  ).required(), 
   toleransi_keterlambatan: Joi.number().integer().min(0).optional(),
   keterangan: Joi.string().allow(null, "").optional(),
   is_active: Joi.boolean().optional(),
@@ -43,10 +39,7 @@ const updateSchema = Joi.object({
 // READ (list)
 const readSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
-  limit: Joi.number().integer().min(1).max(100).default(20),
-  jenis_shift: Joi.string()
-    .valid(...JENIS_SHIFT)
-    .optional(), 
+  limit: Joi.number().integer().min(1).max(100).default(20), 
   is_active: Joi.boolean().optional(),
   q: Joi.string().max(100).optional().allow(""),
 });

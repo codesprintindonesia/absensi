@@ -153,6 +153,8 @@ const processShiftForPegawai = async ({
       transaction,
     });
 
+    console.log("Shift pattern for pegawai", shiftPattern);
+
     if (!shiftPattern || shiftPattern.length === 0) {
       throw new Error(
         `Pattern untuk shift group ${shiftPegawai.id_shift_group} tidak ditemukan`

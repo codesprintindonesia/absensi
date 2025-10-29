@@ -1,9 +1,6 @@
 // src//models/master/shiftKerja.model.js
 import { DataTypes } from 'sequelize';
-import { getSequelize } from '../../libraries/database.instance.js';
-
-// Enum jenis shift sesuai constraint DB:contentReference[oaicite:1]{index=1}
-const JENIS_SHIFT = ['NORMAL', 'ROTATING', 'CUSTOM'];
+import { getSequelize } from '../../libraries/database.instance.js'; 
 
 // Dapatkan instance sequelize
 const sequelize = await getSequelize();
@@ -35,13 +32,7 @@ const ShiftKerja = sequelize.define('m_shift_kerja', {
   hari_kerja: {
     type: DataTypes.JSONB,
     allowNull: false,
-  },
-  jenis_shift: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    defaultValue: 'NORMAL',
-    validate: { isIn: [JENIS_SHIFT] },
-  }, 
+  },  
   toleransi_keterlambatan: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -75,4 +66,4 @@ const ShiftKerja = sequelize.define('m_shift_kerja', {
   timestamps: false,
 });
 
-export { JENIS_SHIFT, ShiftKerja };
+export { ShiftKerja };
