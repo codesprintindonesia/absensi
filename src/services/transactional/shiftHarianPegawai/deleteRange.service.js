@@ -4,6 +4,7 @@ import { getSequelize } from "../../../libraries/database.instance.js";
 import logger from "../../../utils/logger.utils.js";
 import deleteByRange from "../../../repositories/transactional/shiftHarianPegawai/deleteByRange.repository.js";
 import findByRange from "../../../repositories/transactional/shiftHarianPegawai/findByRange.repository.js";
+import { formatDateRange } from "../../../helpers/date.helper.js";
 
 const sequelize = await getSequelize();
 
@@ -15,7 +16,6 @@ export const deleteRangeShiftService = async ({
   idPegawai,
   tanggalMulai,
   tanggalAkhir,
-  alasanHapus = null,
 }) => {
   const transaction = await sequelize.transaction();
 
@@ -28,10 +28,11 @@ export const deleteRangeShiftService = async ({
 
     if (existing.length === 0) {
       throw new Error(
-        `Tidak ada data shift untuk pegawai ${idPegawai} pada rentang ${tanggalMulai} - ${tanggalAkhir}`
+        `Tidak ada data shift untuk pegawai ${idPegawai} pada rentang ${formatDateRange(tanggalMulai, tanggalAkhir)}`
       );
     }
 
+    // Delete data
     const count = await deleteByRange(
       idPegawai,
       tanggalMulai,
@@ -44,8 +45,7 @@ export const deleteRangeShiftService = async ({
     logger.info("[DeleteRangeShift] Success", {
       idPegawai,
       totalDeleted: count,
-      dateRange: `${tanggalMulai} - ${tanggalAkhir}`,
-      alasanHapus,
+      dateRange: formatDateRange(tanggalMulai, tanggalAkhir),
     });
 
     return {
@@ -54,7 +54,6 @@ export const deleteRangeShiftService = async ({
       data: {
         totalDeleted: count,
         dateRange: { tanggalMulai, tanggalAkhir },
-        deletedRecords: existing.length,
       },
     };
   } catch (error) {

@@ -1,4 +1,5 @@
 // src/controllers/transactional/shiftHarianPegawai/updateRange.controller.js
+
 import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
 import updateRangeShiftService from '../../../services/transactional/shiftHarianPegawai/updateRange.service.js';
@@ -13,6 +14,8 @@ const updateRangeController = async (req, res) => {
       id_shift_kerja_final,
       id_lokasi_kerja_final,
       id_pegawai_pengganti,
+      nama_pengganti,
+      id_personal_pengganti,
       alasan_perubahan,
     } = req.body;
 
@@ -24,6 +27,8 @@ const updateRangeController = async (req, res) => {
         idShiftKerjaFinal: id_shift_kerja_final,
         idLokasiKerjaFinal: id_lokasi_kerja_final,
         idPegawaiPengganti: id_pegawai_pengganti,
+        namaPengganti: nama_pengganti,
+        idPersonalPengganti: id_personal_pengganti,
         alasanPerubahan: alasan_perubahan,
       },
     });

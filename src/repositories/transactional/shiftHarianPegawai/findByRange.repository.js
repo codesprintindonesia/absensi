@@ -32,22 +32,22 @@ const findByRange = async (filters, options = {}) => {
     include: [
       {
         model: ShiftKerja,
-        as: 'shiftOriginal',
+        as: 'shiftKerjaOriginal',
         attributes: ['id', 'nama', 'jam_masuk', 'jam_pulang'],
       },
       {
         model: ShiftKerja,
-        as: 'shiftFinal',
+        as: 'shiftKerja',
         attributes: ['id', 'nama', 'jam_masuk', 'jam_pulang'],
       },
       {
         model: LokasiKerja,
-        as: 'lokasiOriginal',
+        as: 'lokasiKerjaOriginal',
         attributes: ['id', 'nama', 'kode_referensi'],
       },
       {
         model: LokasiKerja,
-        as: 'lokasiFinal',
+        as: 'lokasiKerja',
         attributes: ['id', 'nama', 'kode_referensi'],
       },
     ],

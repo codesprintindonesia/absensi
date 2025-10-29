@@ -1,11 +1,11 @@
 // src/routes/transactional/shiftHarianPegawai.route.js
 
 import express from "express";
-import { generateShiftHarianPegawaiController } from "../../controllers/transactional/shiftHarianPegawai/generate.controller.js";
-import { createManualController } from "../../controllers/transactional/shiftHarianPegawai/createManual.controller.js";
-import { updateRangeController } from "../../controllers/transactional/shiftHarianPegawai/updateRange.controller.js";
-import { deleteRangeController } from "../../controllers/transactional/shiftHarianPegawai/deleteRange.controller.js";
-import { getByRangeController } from "../../controllers/transactional/shiftHarianPegawai/getByRange.controller.js";
+import generateShiftHarianPegawaiController  from "../../controllers/transactional/shiftHarianPegawai/generate.controller.js";
+import createManualController from "../../controllers/transactional/shiftHarianPegawai/createManual.controller.js";
+import updateRangeController from "../../controllers/transactional/shiftHarianPegawai/updateRange.controller.js";
+import deleteRangeController from "../../controllers/transactional/shiftHarianPegawai/deleteRange.controller.js";
+import getByRangeController from "../../controllers/transactional/shiftHarianPegawai/getByRange.controller.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import {
   generateShiftSchema,

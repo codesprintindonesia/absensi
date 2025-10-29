@@ -162,19 +162,23 @@ export const createManualSchema = Joi.object({
   overwrite_existing: Joi.boolean().optional(),
 });
 
-export const updateRangeSchema = Joi.object({
-  id_pegawai: Joi.string().max(10).required(),
+export const updateRangeSchema = Joi.object({ 
+  id_pegawai: Joi.string().required(),
   tanggal_mulai: Joi.date().iso().required(),
-  tanggal_akhir: Joi.date().iso().min(Joi.ref("tanggal_mulai")).required(),
-  id_shift_kerja_final: Joi.string().max(8).optional(),
-  id_lokasi_kerja_final: Joi.string().max(8).optional(),
-  id_pegawai_pengganti: Joi.string().max(10).allow(null).optional(),
-  alasan_perubahan: Joi.string().allow(null, "").optional(),
+  tanggal_akhir: Joi.date().iso().min(Joi.ref('tanggal_mulai')).required(),
+  id_shift_kerja_final: Joi.string().optional(),
+  id_lokasi_kerja_final: Joi.string().optional(),
+  id_pegawai_pengganti: Joi.string().optional().allow(null),
+  nama_pengganti: Joi.string().optional().allow(null),
+  id_personal_pengganti: Joi.string().optional().allow(null),
+  alasan_perubahan: Joi.string().optional().allow(null), 
 }).or(
   "id_shift_kerja_final",
   "id_lokasi_kerja_final",
   "id_pegawai_pengganti",
-  "alasan_perubahan"
+  "alasan_perubahan",
+  "nama_pengganti",
+  "id_personal_pengganti"
 );
 
 export const deleteRangeSchema = Joi.object({

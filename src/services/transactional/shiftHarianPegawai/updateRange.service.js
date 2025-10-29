@@ -4,6 +4,7 @@ import { getSequelize } from "../../../libraries/database.instance.js";
 import logger from "../../../utils/logger.utils.js";
 import updateByRange from "../../../repositories/transactional/shiftHarianPegawai/updateByRange.repository.js";
 import findByRange from "../../../repositories/transactional/shiftHarianPegawai/findByRange.repository.js";
+import { formatDateRange } from "../../../helpers/date.helper.js";
 
 const sequelize = await getSequelize();
 
@@ -28,7 +29,7 @@ export const updateRangeShiftService = async ({
 
     if (existing.length === 0) {
       throw new Error(
-        `Tidak ada data shift untuk pegawai ${idPegawai} pada rentang ${tanggalMulai} - ${tanggalAkhir}`
+        `Tidak ada data shift untuk pegawai ${idPegawai} pada rentang ${formatDateRange(tanggalMulai, tanggalAkhir)}`
       );
     }
 
@@ -43,11 +44,19 @@ export const updateRangeShiftService = async ({
       payload.id_lokasi_kerja_final = updateData.idLokasiKerjaFinal;
     }
     
-    if (updateData.idPegawaiPengganti) {
+    if (updateData.idPegawaiPengganti !== undefined) {
       payload.id_pegawai_pengganti = updateData.idPegawaiPengganti;
     }
+
+    if (updateData.namaPengganti !== undefined) {
+      payload.nama_pengganti = updateData.namaPengganti;
+    }
+
+    if (updateData.idPersonalPengganti !== undefined) {
+      payload.id_personal_pengganti = updateData.idPersonalPengganti;
+    }
     
-    if (updateData.alasanPerubahan) {
+    if (updateData.alasanPerubahan !== undefined) {
       payload.alasan_perubahan = updateData.alasanPerubahan;
     }
 
@@ -68,7 +77,7 @@ export const updateRangeShiftService = async ({
     logger.info("[UpdateRangeShift] Success", {
       idPegawai,
       totalUpdated: count,
-      dateRange: `${tanggalMulai} - ${tanggalAkhir}`,
+      dateRange: formatDateRange(tanggalMulai, tanggalAkhir),
       updateData: payload,
     });
 
