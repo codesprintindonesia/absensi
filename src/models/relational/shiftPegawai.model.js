@@ -34,7 +34,9 @@ const ShiftPegawai = sequelize.define(
       validate: {
         isAfterOrEqual(value) {
           if (value && this.tanggal_mulai && value < this.tanggal_mulai) {
-            throw new Error("tanggal_akhir tidak boleh lebih kecil dari tanggal_mulai");
+            throw new Error(
+              "tanggal_akhir tidak boleh lebih kecil dari tanggal_mulai"
+            );
           }
         },
       },
@@ -61,6 +63,11 @@ const ShiftPegawai = sequelize.define(
     nama_pegawai: {
       type: DataTypes.STRING(100),
       allowNull: false,
+    },
+    offset_rotasi_hari: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
     },
   },
   {
