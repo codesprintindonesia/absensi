@@ -25,7 +25,7 @@ const generateRealisasiLemburId = (idPegawai, periodeBulan) => {
  */
 const generateRealisasiLemburBulanan = async (idPegawai, periodeBulan, options = {}) => {
   const sequelize = await getSequelize();
-  const transaction = options.transaction || await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
     // Parse periode bulan

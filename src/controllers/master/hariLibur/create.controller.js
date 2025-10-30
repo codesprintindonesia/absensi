@@ -1,5 +1,5 @@
 // src/controllers/master/hariLibur/create.controller.js
-import { formatErrorMessage } from '../../../helpers/error.helper.js';
+import { formatErrorMessage, mapErrorToStatusCode } from '../../../helpers/error.helper.js';
 import { sendResponse } from '../../../helpers/response.helper.js';
 import create from '../../../services/master/hariLibur/create.service.js';
 import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
@@ -10,18 +10,17 @@ import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
  */
 const createController = async (req, res) => {
   try {
-    const holiday = await create(req.body);
+    const holiday = await create(req.body, { req });
     
     return sendResponse(res, {
-      code: HTTP_STATUS.CREATED, // 201
+      httpCode: HTTP_STATUS.CREATED, // 201
       message: 'Success',
       data: holiday
     });
   } catch (error) {
-    console.log(error);
-    const statusCode = error.statusCode || HTTP_STATUS.INTERNAL_ERROR;
+    console.log(error); 
     return sendResponse(res, {
-      code: statusCode,
+      httpCode: mapErrorToStatusCode(error),
       message: formatErrorMessage(error)
     });
   }

@@ -1,8 +1,15 @@
+// ================================================================
 // src/controllers/master/hariLibur/update.controller.js
-import { formatErrorMessage } from '../../../helpers/error.helper.js';
-import { sendResponse } from '../../../helpers/response.helper.js';
-import update from '../../../services/master/hariLibur/update.service.js';
-import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
+// Controller untuk update hari libur DENGAN AUDIT LOG
+// ================================================================
+
+import {
+  formatErrorMessage,
+  mapErrorToStatusCode,
+} from "../../../helpers/error.helper.js";
+import { sendResponse } from "../../../helpers/response.helper.js";
+import updateService from "../../../services/master/hariLibur/update.service.js";
+import HTTP_STATUS from "../../../constants/httpStatus.constant.js";
 
 /**
  * PUT /hari-libur/:tanggal
@@ -11,20 +18,19 @@ import HTTP_STATUS from '../../../constants/httpStatus.constant.js';
 const updateController = async (req, res) => {
   try {
     const { tanggal } = req.params;
-    
-    const holiday = await update(tanggal, req.body);
-    
+
+    // Pass req object ke service untuk audit log
+    const holiday = await updateService(tanggal, req.body, { req });
+
     return sendResponse(res, {
-      code: HTTP_STATUS.OK, // 200
-      message: 'Success',
-      data: holiday
+      httpCode: HTTP_STATUS.OK, // 200
+      message: "Hari libur berhasil diupdate",
+      data: holiday,
     });
   } catch (error) {
-    console.log(error);
-    const statusCode = error.statusCode || HTTP_STATUS.INTERNAL_ERROR;
     return sendResponse(res, {
-      code: statusCode,
-      message: formatErrorMessage(error)
+      httpCode: mapErrorToStatusCode(error),
+      message: formatErrorMessage(error),
     });
   }
 };

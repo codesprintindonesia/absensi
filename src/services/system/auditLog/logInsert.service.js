@@ -3,15 +3,9 @@
 // Service untuk log INSERT operation
 // ================================================================
 
-import { nanoid } from 'nanoid';
-import insertRepository from '../../../repositories/system/auditLog/insert.repository.js';
-
-/**
- * Generate unique audit ID
- */
-const generateAuditId = () => {
-  return `AUD${Date.now()}${nanoid(10)}`;
-};
+import { nanoid } from "nanoid";
+import insertRepository from "../../../repositories/system/auditLog/insert.repository.js"; 
+import { generateAuditId } from "../../../utils/audit.util.js";
 
 /**
  * Extract metadata dari request
@@ -19,8 +13,8 @@ const generateAuditId = () => {
 const extractMetadata = (req) => {
   return {
     alamat_ip: req.ip || req.connection?.remoteAddress || null,
-    user_agent_info: req.get('user-agent') || null,
-    id_user_pelaku: req.user?.id || req.userId || 'SYSTEM',
+    user_agent_info: req.get("user-agent") || null,
+    id_user_pelaku: req.user?.id || req.userId || "SYSTEM",
   };
 };
 
@@ -32,7 +26,7 @@ const logInsertService = async (params, options = {}) => {
 
   // Validate
   if (!nama_tabel || !id_record || !data_baru) {
-    throw new Error('Missing required fields for audit log INSERT');
+    throw new Error("Missing required fields for audit log INSERT");
   }
 
   // Extract metadata
@@ -43,7 +37,7 @@ const logInsertService = async (params, options = {}) => {
     id: generateAuditId(),
     nama_tabel,
     id_record,
-    jenis_aksi: 'INSERT',
+    jenis_aksi: "INSERT",
     data_lama: null,
     data_baru: JSON.stringify(data_baru),
     ...metadata,

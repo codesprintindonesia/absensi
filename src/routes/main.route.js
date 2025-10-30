@@ -12,6 +12,7 @@ import hariLiburRoutes from './master/hariLibur.route.js';
 import lokasiKerjaPegawaiRoutes from './relational/lokasiKerjaPegawai.route.js';
 import shiftHarianPegawaiRoutes from './transactional/shiftHarianPegawai.route.js';
 import absensiHarianRoutes from './transactional/absensiHarian.route.js';
+import realisasiLemburRoutes from './laporan/realisasiLembur.route.js';
 
 const router = Router();
 
@@ -28,6 +29,7 @@ router.use("/hari-libur", hariLiburRoutes);
 router.use("/lokasi-kerja-pegawai", lokasiKerjaPegawaiRoutes);
 router.use("/shift-harian-pegawai", shiftHarianPegawaiRoutes);
 router.use("/absensi-harian", absensiHarianRoutes);
+router.use("/realisasi-lembur", realisasiLemburRoutes);
 
 // Error handler middleware (harus di akhir) 
 

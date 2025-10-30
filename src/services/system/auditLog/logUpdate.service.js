@@ -5,14 +5,8 @@
 
 import { nanoid } from 'nanoid';
 import insertRepository from '../../../repositories/system/auditLog/insert.repository.js';
-
-/**
- * Generate unique audit ID
- */
-const generateAuditId = () => {
-  return `AUD${Date.now()}${nanoid(10)}`;
-};
-
+import { generateAuditId } from '../../../utils/audit.util.js';
+ 
 /**
  * Extract metadata dari request
  */

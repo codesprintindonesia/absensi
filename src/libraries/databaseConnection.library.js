@@ -74,7 +74,7 @@ export default class Database {
           idle: process.env.DB_POOL_IDLE ? Number(process.env.DB_POOL_IDLE) : (config.pool?.idle ?? 10000),
           evict: process.env.DB_POOL_EVICT ? Number(process.env.DB_POOL_EVICT) : (config.pool?.evict ?? 1000),
         },
-        logging: false, // set true jika ingin debug query
+        logging: true, // set true jika ingin debug query
         define: {
           underscored: true,
           freezeTableName: false,
