@@ -36,12 +36,12 @@ export const updateRangeShiftService = async ({
     // Build update payload
     const payload = {};
     
-    if (updateData.idShiftKerjaFinal) {
-      payload.id_shift_kerja_final = updateData.idShiftKerjaFinal;
+    if (updateData.idShiftKerjaAktual) {
+      payload.id_shift_kerja_aktual = updateData.idShiftKerjaAktual;
     }
     
-    if (updateData.idLokasiKerjaFinal) {
-      payload.id_lokasi_kerja_final = updateData.idLokasiKerjaFinal;
+    if (updateData.idLokasiKerjaAktual) {
+      payload.id_lokasi_kerja_aktual = updateData.idLokasiKerjaAktual;
     }
     
     if (updateData.idPegawaiPengganti !== undefined) {

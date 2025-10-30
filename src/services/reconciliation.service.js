@@ -204,7 +204,7 @@ const prosesAbsensiPegawai = async (tanggal, jadwal, logs, kebijakan) => {
     is_shift_lintas_hari: false, // Bisa ditambahkan logic untuk detect lintas hari
     id_kebijakan_absensi: kebijakan.id,
     catatan_khusus: catatanKhusus,
-    is_data_final: false,
+    is_data_aktual: false,
   };
 
   // 7. Save atau update

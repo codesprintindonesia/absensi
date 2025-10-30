@@ -31,11 +31,11 @@ const tracingMiddleware = (req, res, next) => {
     }
     
     // Track response
-    const originalSend = res.send;
+    const jadwalSend = res.send;
     res.send = function(data) {
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_size', Buffer.byteLength(JSON.stringify(data)));
-      return originalSend.call(this, data);
+      return jadwalSend.call(this, data);
     };
   }
   

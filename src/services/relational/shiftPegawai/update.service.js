@@ -28,19 +28,19 @@ const updateService = async (id, updateData, updatedBy = "SYSTEM") => {
     }
   }
 
-  // nilai final setelah update (untuk validasi overlap)
-  const final = {
+  // nilai aktual setelah update (untuk validasi overlap)
+  const aktual = {
     id_pegawai: updateData.id_pegawai ?? existing.id_pegawai,
     tanggal_mulai: updateData.tanggal_mulai ?? existing.tanggal_mulai,
     tanggal_akhir: (updateData.tanggal_akhir !== undefined ? updateData.tanggal_akhir : existing.tanggal_akhir) ?? null,
     is_active: updateData.is_active !== undefined ? updateData.is_active : existing.is_active,
   };
 
-  if (final.is_active === true) {
+  if (aktual.is_active === true) {
     const conflict = await findOverlapActiveRepository({
-      id_pegawai: final.id_pegawai,
-      tanggal_mulai: final.tanggal_mulai,
-      tanggal_akhir: final.tanggal_akhir,
+      id_pegawai: aktual.id_pegawai,
+      tanggal_mulai: aktual.tanggal_mulai,
+      tanggal_akhir: aktual.tanggal_akhir,
       excludeId: id,
     });
     if (conflict) {

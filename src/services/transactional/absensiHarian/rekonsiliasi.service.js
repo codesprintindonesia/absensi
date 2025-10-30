@@ -310,7 +310,7 @@ const prosesAbsensiPegawai = async (
     is_shift_lintas_hari: isShiftLintasHari(jadwal.jam_masuk, jadwal.jam_pulang),
     id_kebijakan_absensi: kebijakan.id,
     catatan_khusus: catatan.length > 0 ? catatan.join(', ') : null,
-    is_data_final: false,
+    is_data_aktual: false,
     nama_pegawai: jadwal.nama_pegawai,
     id_personal: jadwal.id_personal
   };

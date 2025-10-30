@@ -20,7 +20,7 @@ const updateService = async (id, updateData, updatedBy = "SYSTEM") => {
   const targetIsAktif =
     updateData.is_active !== undefined ? updateData.is_active : existing.is_active; 
 
-  // siapkan payload final (gaya kamu: catat updated_by & updated_at)
+  // siapkan payload aktual (gaya kamu: catat updated_by & updated_at)
   const dataToUpdate = {
     ...updateData,
     updated_by: updatedBy,

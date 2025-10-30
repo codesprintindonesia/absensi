@@ -27,7 +27,7 @@ const updateAutoResolveService = async (id, updateData, updatedBy = "SYSTEM") =>
     }
   }
 
-  const final = {
+  const aktual = {
     id_pegawai: updateData.id_pegawai ?? existing.id_pegawai,
     tanggal_mulai: updateData.tanggal_mulai ?? existing.tanggal_mulai,
     tanggal_akhir: (updateData.tanggal_akhir !== undefined ? updateData.tanggal_akhir : existing.tanggal_akhir) ?? null,
@@ -36,12 +36,12 @@ const updateAutoResolveService = async (id, updateData, updatedBy = "SYSTEM") =>
 
   const sequelize = await getSequelize();
   return await sequelize.transaction(async (trx) => {
-    if (final.is_active === true) {
+    if (aktual.is_active === true) {
       await deactivateOverlapsRepository(
         {
-          id_pegawai: final.id_pegawai,
-          tanggal_mulai: final.tanggal_mulai,
-          tanggal_akhir: final.tanggal_akhir,
+          id_pegawai: aktual.id_pegawai,
+          tanggal_mulai: aktual.tanggal_mulai,
+          tanggal_akhir: aktual.tanggal_akhir,
           excludeId: id,
           updatedBy,
         },

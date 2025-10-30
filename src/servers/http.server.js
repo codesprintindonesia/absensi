@@ -46,7 +46,7 @@ httpServer.get("/health", (req, res) => {
 
 /* 404 handler */
 httpServer.use((req, res) => {
-  console.log(`404 Not Found: ${req.method} ${req.originalUrl}`);
+  console.log(`404 Not Found: ${req.method} ${req.jadwalUrl}`);
   res.status(404).json({ code: 404, message: "Service Not Found" });
 });
 

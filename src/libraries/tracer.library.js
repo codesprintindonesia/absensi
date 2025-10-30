@@ -47,7 +47,7 @@ const withSpan = async (spanName, attributes = {}, fn) => {
       });
       
       throw error;
-    } finally {
+    } aktually {
       span.end();
     }
   });

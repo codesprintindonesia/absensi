@@ -7,7 +7,7 @@ export function encryptString(plain) {
   const key = getEncryptionKey();
 
   const cipher = crypto.createCipheriv(ALGO, key, iv);
-  const encrypted = Buffer.concat([cipher.update(plain, "utf8"), cipher.final()]);
+  const encrypted = Buffer.concat([cipher.update(plain, "utf8"), cipher.aktual()]);
   const tag = cipher.getAuthTag();
 
   return Buffer.concat([iv, tag, encrypted]).toString("base64");

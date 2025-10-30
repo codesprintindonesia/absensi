@@ -131,16 +131,16 @@ const AbsensiHarian = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    is_data_final: {
+    is_data_aktual: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false,
     },
-    difinalisasi_oleh: {
+    diaktualisasi_oleh: {
       type: DataTypes.STRING(10),
       allowNull: true,
     },
-    tanggal_finalisasi: {
+    tanggal_aktualisasi: {
       type: DataTypes.DATE,
       allowNull: true,
     },

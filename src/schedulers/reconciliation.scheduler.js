@@ -341,12 +341,12 @@ const jalankanRekonsiliasi = async (targetDate = null) => {
     const waktuSelesai = new Date();
     const durasiDetik = Math.round((waktuSelesai - waktuMulai) / 1000);
 
-    const statusFinal =
+    const statusAktual =
       jumlahGagal === 0 ? "SUCCESS" : jumlahBerhasil > 0 ? "PARTIAL" : "FAILED";
 
     await ProsesHarian.update(
       {
-        status_proses: statusFinal,
+        status_proses: statusAktual,
         waktu_selesai: waktuSelesai,
         total_data_diproses: totalDiproses,
         jumlah_success: jumlahBerhasil,

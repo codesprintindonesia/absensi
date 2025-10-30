@@ -19,13 +19,13 @@ import { LogRawAbsensi } from "./transactional/logRawAbsensi.model.js";
  * Relasi: Many-to-One (ShiftHarianPegawai -> ShiftKerja)
  */
 ShiftHarianPegawai.belongsTo(ShiftKerja, {
-  foreignKey: "id_shift_kerja_original",
-  as: "shiftKerjaOriginal",
+  foreignKey: "id_shift_kerja_jadwal",
+  as: "shiftKerjaJadwal",
   targetKey: "id",
 });
 
 ShiftHarianPegawai.belongsTo(ShiftKerja, {
-  foreignKey: "id_shift_kerja_final",
+  foreignKey: "id_shift_kerja_aktual",
   as: "shiftKerja",
   targetKey: "id",
 });
@@ -35,13 +35,13 @@ ShiftHarianPegawai.belongsTo(ShiftKerja, {
  * Relasi: Many-to-One (ShiftHarianPegawai -> LokasiKerja)
  */
 ShiftHarianPegawai.belongsTo(LokasiKerja, {
-  foreignKey: "id_lokasi_kerja_original",
-  as: "lokasiKerjaOriginal",
+  foreignKey: "id_lokasi_kerja_jadwal",
+  as: "lokasiKerjaJadwal",
   targetKey: "id",
 });
 
 ShiftHarianPegawai.belongsTo(LokasiKerja, {
-  foreignKey: "id_lokasi_kerja_final",
+  foreignKey: "id_lokasi_kerja_aktual",
   as: "lokasiKerja",
   targetKey: "id",
 });

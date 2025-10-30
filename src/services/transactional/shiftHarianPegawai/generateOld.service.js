@@ -329,13 +329,13 @@ const processShiftForPegawai = async ({
     await sequelize.query(
       `INSERT INTO absensi.t_shift_harian_pegawai (
         id, id_pegawai, tanggal_kerja, 
-        id_shift_kerja_original, id_shift_kerja_final,
-        id_lokasi_kerja_original, id_lokasi_kerja_final,
+        id_shift_kerja_jadwal, id_shift_kerja_aktual,
+        id_lokasi_kerja_jadwal, id_lokasi_kerja_aktual,
         nama_pegawai, id_personal
       ) VALUES (
         :id, :idPegawai, :tanggalKerja,
-        :shiftOriginal, :shiftFinal,
-        :lokasiOriginal, :lokasiFinal,
+        :shiftJadwal, :shiftAktual,
+        :lokasiJadwal, :lokasiAktual,
         :namaPegawai, :idPersonal
       )`,
       {
@@ -343,10 +343,10 @@ const processShiftForPegawai = async ({
           id,
           idPegawai: shiftPegawai.id_pegawai,
           tanggalKerja: tanggal,
-          shiftOriginal: shiftId,
-          shiftFinal: shiftId,
-          lokasiOriginal: lokasiKerja.id_lokasi_kerja,
-          lokasiFinal: lokasiKerja.id_lokasi_kerja,
+          shiftJadwal: shiftId,
+          shiftAktual: shiftId,
+          lokasiJadwal: lokasiKerja.id_lokasi_kerja,
+          lokasiAktual: lokasiKerja.id_lokasi_kerja,
           namaPegawai: shiftPegawai.nama_pegawai,
           idPersonal: shiftPegawai.id_personal,
         },
