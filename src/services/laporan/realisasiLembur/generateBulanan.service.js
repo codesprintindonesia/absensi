@@ -1,9 +1,16 @@
-// src/services/laporan/realisasiLembur/generateBulanan.service.js
+// src/services/laporan/realisasiLembur/generateBulanan.service.js 
 
-import { AbsensiHarian } from "../../../models/transactional/absensiHarian.model.js";
-import { RealisasiLembur } from "../../../models/laporan/realisasiLembur.model.js";
+import { getAbsensiHarianByPegawaiAndPeriode } from "../../../repositories/laporan/realisasiLembur/getAbsensiHarianByPegawaiAndPeriode.repository.js";
+import { getPegawaiListByPeriode } from "../../../repositories/laporan/realisasiLembur/getPegawaiListByPeriode.repository.js";
+import { findRealisasiLembur } from "../../../repositories/laporan/realisasiLembur/findRealisasiLembur.repository.js";
+import { createRealisasiLembur } from "../../../repositories/laporan/realisasiLembur/createRealisasiLembur.repository.js";
+import { updateRealisasiLembur } from "../../../repositories/laporan/realisasiLembur/updateRealisasiLembur.repository.js";
 import { getSequelize } from "../../../libraries/database.instance.js";
-import { Op } from "sequelize";
+
+/**
+ * BUSINESS LOGIC LAYER
+ * Menangani semua kalkulasi dan orchestration
+ */
 
 /**
  * Generate ID untuk realisasi lembur
@@ -17,231 +24,197 @@ const generateRealisasiLemburId = (idPegawai, periodeBulan) => {
 };
 
 /**
- * Generate realisasi lembur bulanan untuk satu pegawai
- * @param {string} idPegawai - ID pegawai
- * @param {string} periodeBulan - Periode bulan (format: YYYY-MM-DD atau YYYY-MM-01)
- * @param {object} options - Options untuk transaction
- * @returns {object} Data realisasi lembur yang di-generate
+ * Hitung statistik dari data absensi
+ * PURE FUNCTION - Tidak ada side effects
  */
-const generateRealisasiLemburBulanan = async (idPegawai, periodeBulan, options = {}) => {
-  const sequelize = await getSequelize();
-  const transaction = await sequelize.transaction();
+const hitungStatistikAbsensi = (dataAbsensi) => {
+  let totalJamLemburBulanan = 0;
+  let totalHariTerlambat = 0;
+  let totalMenitKeterlambatan = 0;
+  let totalHariTidakHadir = 0;
+  let totalHariKerjaEfektif = 0;
+  let jumlahHariTerlambat = 0;
 
-  try {
-    // Parse periode bulan
-    const periodeDate = new Date(periodeBulan);
-    const tahun = periodeDate.getFullYear();
-    const bulan = periodeDate.getMonth() + 1;
+  for (const absensi of dataAbsensi) {
+    const jamLembur = parseFloat(absensi.jam_lembur_dihitung || 0);
+    const menitTerlambat = parseInt(absensi.menit_keterlambatan || 0);
+    const jamKerja = parseFloat(absensi.total_jam_kerja_efektif || 0);
+    const statusKehadiran = absensi.status_kehadiran;
 
-    // Hitung tanggal awal dan akhir bulan
-    const tanggalAwal = new Date(tahun, bulan - 1, 1);
-    const tanggalAkhir = new Date(tahun, bulan, 0);
+    totalJamLemburBulanan += jamLembur;
 
-    // Ambil semua data absensi harian untuk pegawai di bulan tersebut
-    const dataAbsensi = await AbsensiHarian.findAll({
-      where: {
-        id_pegawai: idPegawai,
-        tanggal_absensi: {
-          [Op.between]: [tanggalAwal, tanggalAkhir],
-        },
-      },
-      order: [["tanggal_absensi", "ASC"]],
-      transaction,
-    });
-
-    if (dataAbsensi.length === 0) {
-      throw new Error(`Tidak ada data absensi untuk pegawai ${idPegawai} pada periode ${periodeBulan}`);
+    if (menitTerlambat > 0) {
+      totalHariTerlambat++;
+      jumlahHariTerlambat++;
+      totalMenitKeterlambatan += menitTerlambat;
     }
 
-    // Inisialisasi variabel perhitungan
-    let totalJamLemburBulanan = 0;
-    let totalHariTerlambat = 0;
-    let totalMenitKeterlambatan = 0;
-    let totalHariTidakHadir = 0;
-    let totalHariKerjaEfektif = 0;
-    let jumlahHariTerlambat = 0;
-
-    // Ambil data pegawai dari record pertama (untuk denormalisasi)
-    const dataPegawai = dataAbsensi[0];
-
-    // Proses setiap record absensi
-    dataAbsensi.forEach((absensi) => {
-      const absensiJson = absensi.toJSON();
-
-      // Hitung jam lembur
-      const jamLembur = parseFloat(absensiJson.jam_lembur_dihitung) || 0;
-      totalJamLemburBulanan += jamLembur;
-
-      // Hitung keterlambatan
-      const menitTerlambat = parseInt(absensiJson.menit_keterlambatan) || 0;
-      if (menitTerlambat > 0) {
-        totalHariTerlambat++;
-        totalMenitKeterlambatan += menitTerlambat;
-        jumlahHariTerlambat++;
-      }
-
-      // Hitung hari tidak hadir
-      const statusKehadiran = absensiJson.status_kehadiran;
-      if (statusKehadiran === "Tidak Hadir" || statusKehadiran === "Alpa") {
-        totalHariTidakHadir++;
-      }
-
-      // Hitung hari kerja efektif (hadir, terlambat, atau pulang cepat = dianggap masih kerja)
-      if (
-        statusKehadiran === "Hadir" ||
-        statusKehadiran === "Terlambat" ||
-        statusKehadiran === "Pulang Cepat"
-      ) {
-        totalHariKerjaEfektif++;
-      }
-    });
-
-    // Hitung rata-rata menit keterlambatan
-    const rataMenitKeterlambatan =
-      jumlahHariTerlambat > 0 ? totalMenitKeterlambatan / jumlahHariTerlambat : 0;
-
-    // Hitung persentase kehadiran
-    const totalHariDalamBulan = dataAbsensi.length;
-    const persentaseKehadiran =
-      totalHariDalamBulan > 0
-        ? ((totalHariKerjaEfektif / totalHariDalamBulan) * 100).toFixed(2)
-        : 0;
-
-    // Generate ID realisasi lembur
-    const realisasiLemburId = generateRealisasiLemburId(idPegawai, periodeBulan);
-
-    // Siapkan data untuk insert/update
-    const dataRealisasiLembur = {
-      id: realisasiLemburId,
-      id_pegawai: idPegawai,
-      periode_bulan_lembur: new Date(tahun, bulan - 1, 1), // Tanggal 1 bulan tersebut
-      total_jam_lembur_bulanan: parseFloat(totalJamLemburBulanan.toFixed(2)),
-      total_hari_terlambat_bulanan: totalHariTerlambat,
-      rata_menit_keterlambatan: parseFloat(rataMenitKeterlambatan.toFixed(2)),
-      total_hari_tidak_hadir: totalHariTidakHadir,
-      total_hari_kerja_efektif: totalHariKerjaEfektif,
-      persentase_kehadiran: parseFloat(persentaseKehadiran),
-      is_data_final: false,
-      // Data denormalisasi dari tabel absensi
-      nama_pegawai: dataPegawai.nama_pegawai,
-      kode_cabang: dataPegawai.kode_cabang,
-      nama_cabang: dataPegawai.nama_cabang,
-      id_divisi: dataPegawai.id_divisi,
-      nama_divisi: dataPegawai.nama_divisi,
-      nama_jabatan_detail: dataPegawai.nama_jabatan_detail,
-    };
-
-    // Cek apakah data sudah ada
-    const existing = await RealisasiLembur.findOne({
-      where: {
-        id_pegawai: idPegawai,
-        periode_bulan_lembur: dataRealisasiLembur.periode_bulan_lembur,
-      },
-      transaction,
-    });
-
-    let result;
-    if (existing) {
-      // Update data yang sudah ada
-      await RealisasiLembur.update(dataRealisasiLembur, {
-        where: {
-          id_pegawai: idPegawai,
-          periode_bulan_lembur: dataRealisasiLembur.periode_bulan_lembur,
-        },
-        transaction,
-      });
-
-      result = await RealisasiLembur.findOne({
-        where: {
-          id_pegawai: idPegawai,
-          periode_bulan_lembur: dataRealisasiLembur.periode_bulan_lembur,
-        },
-        transaction,
-      });
-    } else {
-      // Insert data baru
-      result = await RealisasiLembur.create(dataRealisasiLembur, { transaction });
+    if (statusKehadiran === "Alpa" || statusKehadiran === "Cuti" || statusKehadiran === "Izin") {
+      totalHariTidakHadir++;
     }
 
-    // Commit transaction jika dibuat di sini
-    if (!options.transaction) {
-      await transaction.commit();
+    if (jamKerja > 0) {
+      totalHariKerjaEfektif++;
     }
-
-    return {
-      success: true,
-      data: result.toJSON(),
-      summary: {
-        total_hari_diproses: dataAbsensi.length,
-        total_jam_lembur: totalJamLemburBulanan,
-        total_hari_terlambat: totalHariTerlambat,
-        total_hari_kerja_efektif: totalHariKerjaEfektif,
-      },
-    };
-  } catch (error) {
-    // Rollback transaction jika dibuat di sini
-    if (!options.transaction) {
-      await transaction.rollback();
-    }
-    throw error;
   }
+
+  return {
+    totalJamLemburBulanan: parseFloat(totalJamLemburBulanan.toFixed(2)),
+    totalHariTerlambat,
+    totalMenitKeterlambatan,
+    totalHariTidakHadir,
+    totalHariKerjaEfektif,
+    jumlahHariTerlambat,
+  };
 };
 
 /**
- * Generate realisasi lembur bulanan untuk semua pegawai yang memiliki data absensi
- * @param {string} periodeBulan - Periode bulan (format: YYYY-MM-DD atau YYYY-MM-01)
- * @returns {object} Summary hasil generate
+ * Generate realisasi lembur untuk SATU pegawai
+ * @param {string} idPegawai - ID pegawai
+ * @param {string} periodeBulan - Format: YYYY-MM-DD atau YYYY-MM-01
+ * @param {Object} transaction - Transaction yang HARUS disediakan dari luar
+ * @returns {Object} Result dengan data dan summary
+ */
+const generateRealisasiLemburBulanan = async (idPegawai, periodeBulan, transaction) => {
+  // Validasi transaction HARUS ada
+  if (!transaction) {
+    throw new Error("Transaction is required for generateRealisasiLemburBulanan");
+  }
+
+  // Parse periode bulan
+  const periodeDate = new Date(periodeBulan);
+  const tahun = periodeDate.getFullYear();
+  const bulan = periodeDate.getMonth() + 1;
+  const tanggalAwal = new Date(tahun, bulan - 1, 1);
+  const tanggalAkhir = new Date(tahun, bulan, 0);
+
+  // Ambil data absensi dari repository
+  const dataAbsensi = await getAbsensiHarianByPegawaiAndPeriode(
+    idPegawai,
+    tanggalAwal,
+    tanggalAkhir,
+    { transaction }
+  );
+
+  if (dataAbsensi.length === 0) {
+    throw new Error(
+      `Tidak ada data absensi untuk pegawai ${idPegawai} pada periode ${periodeBulan}`
+    );
+  }
+
+  // Hitung statistik dari data absensi (pure function)
+  const stats = hitungStatistikAbsensi(dataAbsensi);
+
+  // Ambil data pegawai dari record pertama (untuk denormalisasi)
+  const firstRecord = dataAbsensi[0];
+  const namaPegawai = firstRecord.nama_pegawai || "";
+  const idPersonal = firstRecord.id_personal || "";
+
+  // Normalize periode bulan ke tanggal 1
+  const periodeBulanNormalized = new Date(tahun, bulan - 1, 1);
+
+  // Buat data realisasi lembur
+  const dataRealisasiLembur = {
+    id: generateRealisasiLemburId(idPegawai, periodeBulanNormalized),
+    id_pegawai: idPegawai,
+    periode_bulan_lembur: periodeBulanNormalized,
+    total_jam_lembur_bulanan: stats.totalJamLemburBulanan,
+    total_hari_terlambat: stats.totalHariTerlambat,
+    total_menit_keterlambatan: stats.totalMenitKeterlambatan,
+    total_hari_tidak_hadir: stats.totalHariTidakHadir,
+    total_hari_kerja_efektif: stats.totalHariKerjaEfektif,
+    id_personal: idPersonal,
+    nama_pegawai: namaPegawai,
+  };
+
+  // Cek apakah data sudah ada
+  const existing = await findRealisasiLembur(
+    idPegawai,
+    periodeBulanNormalized,
+    { transaction }
+  );
+
+  let result;
+  if (existing) {
+    // Update existing
+    result = await updateRealisasiLembur(
+      existing.id,
+      dataRealisasiLembur,
+      { transaction }
+    );
+  } else {
+    // Create new
+    result = await createRealisasiLembur(
+      dataRealisasiLembur,
+      { transaction }
+    );
+  }
+
+  return {
+    success: true,
+    data: result.toJSON ? result.toJSON() : result,
+    summary: {
+      total_hari_diproses: dataAbsensi.length,
+      total_jam_lembur: stats.totalJamLemburBulanan,
+      total_hari_terlambat: stats.totalHariTerlambat,
+      total_hari_kerja_efektif: stats.totalHariKerjaEfektif,
+    },
+  };
+};
+
+/**
+ * Generate realisasi lembur untuk SEMUA pegawai
+ * TRANSACTION MANAGEMENT DI SINI
+ * 
+ * @param {string} periodeBulan - Format: YYYY-MM-DD
+ * @returns {Object} Summary hasil generate
  */
 const generateRealisasiLemburBulananAllPegawai = async (periodeBulan) => {
   const sequelize = await getSequelize();
+  
+  // SINGLE TRANSACTION untuk semua operasi
   const transaction = await sequelize.transaction();
 
   try {
-    // Parse periode bulan
+    // Parse periode
     const periodeDate = new Date(periodeBulan);
     const tahun = periodeDate.getFullYear();
     const bulan = periodeDate.getMonth() + 1;
-
-    // Hitung tanggal awal dan akhir bulan
     const tanggalAwal = new Date(tahun, bulan - 1, 1);
     const tanggalAkhir = new Date(tahun, bulan, 0);
 
-    // Ambil daftar pegawai unik yang memiliki data absensi di bulan tersebut
-    const pegawaiList = await AbsensiHarian.findAll({
-      attributes: [
-        [sequelize.fn("DISTINCT", sequelize.col("id_pegawai")), "id_pegawai"],
-      ],
-      where: {
-        tanggal_absensi: {
-          [Op.between]: [tanggalAwal, tanggalAkhir],
-        },
-      },
-      raw: true,
-      transaction,
-    });
+    // Ambil daftar pegawai unik
+    const pegawaiList = await getPegawaiListByPeriode(
+      tanggalAwal,
+      tanggalAkhir,
+      sequelize,
+      { transaction }
+    );
 
     if (pegawaiList.length === 0) {
-      await transaction.rollback();
       throw new Error(`Tidak ada data absensi untuk periode ${periodeBulan}`);
     }
 
     const results = [];
     const errors = [];
 
-    // Generate realisasi lembur untuk setiap pegawai
+    // Process setiap pegawai dalam TRANSACTION YANG SAMA
     for (const pegawai of pegawaiList) {
       try {
+        // Pass transaction yang sama ke function child
         const result = await generateRealisasiLemburBulanan(
           pegawai.id_pegawai,
           periodeBulan,
-          { transaction }
+          transaction // PENTING: Gunakan transaction yang sama
         );
+        
         results.push({
           id_pegawai: pegawai.id_pegawai,
           status: "success",
           data: result,
         });
       } catch (error) {
+        // Jika ada error di satu pegawai, catat tapi lanjutkan
         errors.push({
           id_pegawai: pegawai.id_pegawai,
           status: "error",
@@ -250,6 +223,23 @@ const generateRealisasiLemburBulananAllPegawai = async (periodeBulan) => {
       }
     }
 
+    // Jika ada error, rollback semua
+    if (errors.length > 0) {
+      await transaction.rollback();
+      
+      return {
+        success: false,
+        periode: periodeBulan,
+        total_pegawai: pegawaiList.length,
+        total_success: results.length,
+        total_error: errors.length,
+        results,
+        errors,
+        message: "Beberapa pegawai gagal diproses, semua perubahan dibatalkan",
+      };
+    }
+
+    // Commit hanya jika semua sukses
     await transaction.commit();
 
     return {
@@ -262,7 +252,10 @@ const generateRealisasiLemburBulananAllPegawai = async (periodeBulan) => {
       errors,
     };
   } catch (error) {
-    await transaction.rollback();
+    // Rollback HANYA SEKALI di sini jika belum di-rollback
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
     throw error;
   }
 };

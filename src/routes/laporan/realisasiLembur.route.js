@@ -17,11 +17,10 @@ import createController from "../../controllers/laporan/realisasiLembur/create.c
 import readController from "../../controllers/laporan/realisasiLembur/read.controller.js";
 import getByIdController from "../../controllers/laporan/realisasiLembur/getById.controller.js";
 import updateController from "../../controllers/laporan/realisasiLembur/update.controller.js";
-import deleteController from "../../controllers/laporan/realisasiLembur/delete.controller.js";
-import {
-  generateBulananController,
-  generateBulananAllPegawaiController,
-} from "../../controllers/laporan/realisasiLembur/generateBulanan.controller.js";
+import deleteController from "../../controllers/laporan/realisasiLembur/delete.controller.js"; 
+
+import generateBulananController from "../../controllers/laporan/realisasiLembur/generateBulanan.controller.js";
+import generateBulananAllPegawaiController from "../../controllers/laporan/realisasiLembur/generateBulananAllPegawai.controller.js";
 
 const router = Router();
 
