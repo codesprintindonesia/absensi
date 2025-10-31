@@ -5,6 +5,10 @@ import "../models/associations.model.js";
 import mainRoutes from "../routes/main.route.js";
 import { logger } from "../libraries/logger.library.js";
 import { tracingMiddleware } from "../middlewares/tracing.middleware.js";
+import swaggerUi from 'swagger-ui-express';
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'yaml';
 
 dotenv();
 
@@ -30,8 +34,14 @@ if (process.env.SIGNOZ_ENABLED === 'true') {
   httpServer.use(tracingMiddleware);
 }
 
+
+// --- MOUNT SWAGGER (tambah 5 baris ini aja di server yang sama)
+const openapiPath = path.resolve('openapi-absensi.yaml'); // letakkan di root project
+const swaggerDoc = yaml.parse(fs.readFileSync(openapiPath, 'utf8'));
+httpServer.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, { explorer: true }));
+
 /* routes */
-httpServer.use("/", mainRoutes);
+httpServer.use("/api", mainRoutes);
 
 /* health check */
 httpServer.get("/health", (req, res) => {

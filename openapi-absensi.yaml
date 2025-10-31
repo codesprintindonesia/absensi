@@ -1,0 +1,573 @@
+openapi: 3.1.0
+info:
+  title: ABSENSI API
+  version: 0.1.1
+  description: >
+    Dokumentasi API untuk layanan ABSENSI.
+
+servers:
+  - url: http://localhost:5000/api
+    description: Local dev
+
+tags:
+  - name: Lokasi Kerja
+  - name: Shift Kerja
+  - name: Shift Group
+  - name: Shift Pegawai
+  - name: Log Raw Absensi
+  - name: Absensi Harian
+  - name: Kebijakan Absensi
+  - name: Hari Libur
+  - name: Koreksi Absensi
+  - name: Proses Harian
+  - name: Lembur Bulanan
+
+components:
+  parameters:
+    PaginationLimit:
+      name: limit
+      in: query
+      description: Batas jumlah data per halaman
+      schema: { type: integer, minimum: 1, maximum: 200, default: 20 }
+    PaginationOffset:
+      name: offset
+      in: query
+      description: Offset data
+      schema: { type: integer, minimum: 0, default: 0 }
+    SortBy:
+      name: sort_by
+      in: query
+      description: Kolom untuk sorting
+      schema: { type: string }
+    SortDir:
+      name: sort_dir
+      in: query
+      description: Arah sorting
+      schema: { type: string, enum: [asc, desc], default: asc }
+
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code: { type: integer }
+        message: { type: string }
+        data: {}
+        metadata: { type: object }
+
+    LokasiKerja:
+      type: object
+      required: [id, kode_referensi, type_lokasi, nama, radius, is_active]
+      properties:
+        id: { type: string, maxLength: 8, example: "LOK-0001" }
+        kode_referensi: { type: string, maxLength: 20, example: "101" }
+        type_lokasi:
+          type: string
+          enum: [DIVISI, BAGIAN, CABANG_UTAMA, CABANG, CABANG_PEMBANTU, KANTOR_FUNGSIONAL, UNIT_KERJA_LAIN]
+        nama: { type: string, maxLength: 100, example: "Cabang Kendari" }
+        alamat: { type: string, nullable: true }
+        latitude: { type: number, format: double, nullable: true }
+        longitude: { type: number, format: double, nullable: true }
+        radius: { type: integer, minimum: 1, maximum: 1000, default: 20 }
+        is_active: { type: boolean, default: true }
+        keterangan: { type: string, nullable: true }
+        cabang_induk: { type: string, maxLength: 3, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    ShiftKerja:
+      type: object
+      required: [id, nama, jam_masuk, jam_pulang, hari_kerja]
+      properties:
+        id: { type: string, maxLength: 8, example: "SHF-0001" }
+        nama: { type: string, maxLength: 50 }
+        jam_masuk: { type: string, format: time, example: "08:00:00" }
+        jam_pulang: { type: string, format: time, example: "17:00:00" }
+        durasi_istirahat: { type: integer, minimum: 0, maximum: 240, default: 60 }
+        hari_kerja:
+          type: array
+          description: ISO weekday 1-7
+          items: { type: integer, minimum: 1, maximum: 7 }
+          example: [1,2,3,4,5]
+        is_umum: { type: boolean, default: true }
+        toleransi_keterlambatan: { type: integer, minimum: 0, default: 15 }
+        keterangan: { type: string, nullable: true }
+        is_active: { type: boolean, default: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    ShiftGroup:
+      type: object
+      required: [id, nama, is_active]
+      properties:
+        id: { type: string, maxLength: 8, example: "GRP-0001" }
+        nama: { type: string, maxLength: 100 }
+        keterangan: { type: string, nullable: true }
+        is_active: { type: boolean, default: true }
+        durasi_rotasi_hari: { type: integer, minimum: 1, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    ShiftGroupDetail:
+      type: object
+      required: [id, id_shift_group, id_shift_kerja]
+      properties:
+        id: { type: string, maxLength: 12, example: "GRP001-D01" }
+        id_shift_group: { type: string, maxLength: 8 }
+        id_shift_kerja: { type: string, maxLength: 8 }
+        urutan_hari_siklus: { type: integer, minimum: 1, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    ShiftPegawai:
+      type: object
+      required: [id, id_pegawai, tanggal_mulai, id_personal, nama_pegawai]
+      properties:
+        id: { type: string, maxLength: 20, example: "RSP-PG001-20250101" }
+        id_pegawai: { type: string, maxLength: 10 }
+        id_shift_kerja: { type: string, maxLength: 8, nullable: true }
+        id_shift_group: { type: string, maxLength: 8, nullable: true }
+        tanggal_mulai: { type: string, format: date }
+        tanggal_akhir: { type: string, format: date, nullable: true }
+        is_active: { type: boolean, default: true }
+        id_personal: { type: string, maxLength: 20 }
+        nama_pegawai: { type: string, maxLength: 100 }
+        offset_rotasi_hari: { type: integer, minimum: 0, default: 0 }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    LogRawAbsensi:
+      type: object
+      required: [id, id_pegawai, waktu_log, source_absensi]
+      properties:
+        id: { type: string, maxLength: 25, example: "LOG-PG001-20250121-IN" }
+        id_pegawai: { type: string, maxLength: 10 }
+        waktu_log: { type: string, format: date-time }
+        id_device: { type: string, maxLength: 50, nullable: true }
+        koordinat_gps: { type: string, maxLength: 50, nullable: true, example: "-3.99,122.51" }
+        id_lokasi_kerja: { type: string, maxLength: 8, nullable: true }
+        is_validasi_geofence: { type: boolean, default: false }
+        jarak_dari_lokasi: { type: number, format: double, nullable: true }
+        akurasi_gps: { type: number, format: double, nullable: true }
+        path_bukti_foto: { type: string, maxLength: 255, nullable: true }
+        qr_hash: { type: string, maxLength: 255, nullable: true }
+        keterangan_log: { type: string, nullable: true }
+        status_validasi: { type: string, enum: [VALID, INVALID], default: VALID }
+        source_absensi: { type: string, enum: [FINGERPRINT, MOBILE_APP, QR_CODE] }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    AbsensiHarian:
+      type: object
+      required: [id, id_pegawai, tanggal_absensi, id_shift_kerja, status_kehadiran, tanggal_kerja_efektif, id_kebijakan_absensi]
+      properties:
+        id: { type: string, maxLength: 25, example: "ABS-PG001-20250121" }
+        id_pegawai: { type: string, maxLength: 10 }
+        tanggal_absensi: { type: string, format: date }
+        id_shift_kerja: { type: string, maxLength: 8 }
+        id_lokasi_kerja_digunakan: { type: string, maxLength: 8, nullable: true }
+        jam_masuk_jadwal: { type: string, format: time, nullable: true }
+        jam_pulang_jadwal: { type: string, format: time, nullable: true }
+        jam_masuk_aktual: { type: string, format: time, nullable: true }
+        jam_keluar_istirahat_aktual: { type: string, format: time, nullable: true }
+        jam_masuk_istirahat_aktual: { type: string, format: time, nullable: true }
+        jam_pulang_aktual: { type: string, format: time, nullable: true }
+        id_log_masuk: { type: string, maxLength: 25, nullable: true }
+        id_log_keluar_istirahat: { type: string, maxLength: 25, nullable: true }
+        id_log_masuk_istirahat: { type: string, maxLength: 25, nullable: true }
+        id_log_pulang: { type: string, maxLength: 25, nullable: true }
+        status_kehadiran:
+          type: string
+          enum: [Hadir, Cuti, Izin, Sakit, SPPD, Alpa, Terlambat, Pulang_Cepat, WFH]
+        menit_keterlambatan: { type: integer, minimum: 0, default: 0 }
+        menit_pulang_cepat: { type: integer, minimum: 0, default: 0 }
+        total_jam_kerja_efektif: { type: number, format: float, minimum: 0, default: 0 }
+        jam_lembur_dihitung: { type: number, format: float, minimum: 0, default: 0 }
+        tanggal_kerja_efektif: { type: string, format: date }
+        is_shift_lintas_hari: { type: boolean, default: false }
+        id_kebijakan_absensi: { type: string, maxLength: 8 }
+        catatan_khusus: { type: string, nullable: true }
+        is_data_final: { type: boolean, default: false }
+        difinalisasi_oleh: { type: string, maxLength: 10, nullable: true }
+        tanggal_finalisasi: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    KebijakanAbsensi:
+      type: object
+      required: [id, nama]
+      properties:
+        id: { type: string, maxLength: 8, example: "KBJ-0001" }
+        nama: { type: string, maxLength: 100 }
+        toleransi_keterlambatan: { type: integer, minimum: 0, default: 15 }
+        min_jam_kerja_full_day: { type: number, format: float, minimum: 0, default: 8 }
+        aturan_potongan_terlambat: { type: object, nullable: true }
+        kebijakan_lembur_otomatis: { type: object, nullable: true }
+        jam_cut_off_hari: { type: string, format: time, default: "23:59:59" }
+        batas_radius_toleransi: { type: integer, minimum: 0, default: 0 }
+        is_default: { type: boolean, default: false }
+        is_active: { type: boolean, default: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    HariLibur:
+      type: object
+      required: [tanggal, nama]
+      properties:
+        tanggal: { type: string, format: date }
+        nama: { type: string, maxLength: 100 }
+        keterangan: { type: string, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    KoreksiAbsensi:
+      type: object
+      required: [id, id_absensi_harian, id_pegawai_pemohon, tanggal_pengajuan, jenis_koreksi, alasan, data_usulan]
+      properties:
+        id: { type: string, maxLength: 18 }
+        id_absensi_harian: { type: string, maxLength: 18 }
+        id_pegawai_pemohon: { type: string, maxLength: 10 }
+        tanggal_pengajuan: { type: string, format: date-time }
+        jenis_koreksi: { type: string, enum: [JAM_MASUK, JAM_PULANG, STATUS_KEHADIRAN, LOKASI, LAINNYA] }
+        alasan: { type: string }
+        data_lama: { type: object, nullable: true }
+        data_usulan: { type: object }
+        path_dokumen_pendukung: { type: string, maxLength: 255, nullable: true }
+        status: { type: string, enum: [PENDING, APPROVED, REJECTED, CANCELLED], default: PENDING }
+        id_atasan_penyetuju: { type: string, maxLength: 10, nullable: true }
+        tanggal_approval: { type: string, format: date-time, nullable: true }
+        catatan_atasan: { type: string, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+    ProsesHarian:
+      type: object
+      required: [id, tanggal_proses, jenis_proses, status_proses, waktu_mulai]
+      properties:
+        id: { type: string, maxLength: 20 }
+        tanggal_proses: { type: string, format: date }
+        jenis_proses: { type: string, maxLength: 20 }
+        status_proses: { type: string, maxLength: 20 }
+        waktu_mulai: { type: string, format: date-time }
+        waktu_selesai: { type: string, format: date-time, nullable: true }
+        total_data_diproses: { type: integer, minimum: 0, default: 0 }
+        jumlah_success: { type: integer, minimum: 0, default: 0 }
+        jumlah_error: { type: integer, minimum: 0, default: 0 }
+        detail_error: { type: object, nullable: true }
+        catatan: { type: string, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+
+    LemburBulanan:
+      type: object
+      required: [id, id_pegawai, periode_bulan_lembur, total_jam_lembur_bulanan]
+      properties:
+        id: { type: string, maxLength: 20 }
+        id_pegawai: { type: string, maxLength: 10 }
+        periode_bulan_lembur: { type: string, format: date }
+        total_jam_lembur_bulanan: { type: number, format: float, minimum: 0 }
+        total_hari_terlambat_bulanan: { type: integer, minimum: 0, default: 0 }
+        rata_menit_keterlambatan: { type: number, format: float, minimum: 0, default: 0 }
+        total_hari_tidak_hadir: { type: integer, minimum: 0, default: 0 }
+        total_hari_kerja_efektif: { type: integer, minimum: 0, default: 0 }
+        persentase_kehadiran: { type: number, format: float, minimum: 0, maximum: 100, default: 0 }
+        is_data_final: { type: boolean, default: false }
+        tanggal_finalisasi_data: { type: string, format: date-time, nullable: true }
+        difinalisasi_oleh: { type: string, maxLength: 10, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+
+paths:
+  /lokasi-kerja:
+    get:
+      tags: [Lokasi Kerja]
+      summary: List lokasi kerja
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/SortDir'
+        - in: query
+          name: type_lokasi
+          schema: { type: string, enum: [DIVISI, BAGIAN, CABANG_UTAMA, CABANG, CABANG_PEMBANTU, KANTOR_FUNGSIONAL, UNIT_KERJA_LAIN] }
+        - in: query
+          name: is_active
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    post:
+      tags: [Lokasi Kerja]
+      summary: Buat lokasi kerja
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/LokasiKerja'
+              required: [id, kode_referensi, type_lokasi, nama]
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /lokasi-kerja/{id}:
+    get:
+      tags: [Lokasi Kerja]
+      summary: Detail lokasi kerja
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    put:
+      tags: [Lokasi Kerja]
+      summary: Ubah lokasi kerja (full update)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LokasiKerja' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    delete:
+      tags: [Lokasi Kerja]
+      summary: Hapus lokasi kerja
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: No Content
+
+  /shift-kerja:
+    get:
+      tags: [Shift Kerja]
+      summary: List shift kerja
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - in: query
+          name: is_active
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: OK
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    post:
+      tags: [Shift Kerja]
+      summary: Buat shift kerja
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ShiftKerja' }
+      responses:
+        '201':
+          description: Created
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+
+  /shift-kerja/{id}:
+    get:
+      tags: [Shift Kerja]
+      summary: Detail shift kerja
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    put:
+      tags: [Shift Kerja]
+      summary: Ubah shift kerja (full update)
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ShiftKerja' } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    delete:
+      tags: [Shift Kerja]
+      summary: Hapus shift kerja
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      responses: { '204': { description: No Content } }
+
+  /shift-group:
+    get:
+      tags: [Shift Group]
+      summary: List shift group
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Shift Group]
+      summary: Buat shift group
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ShiftGroup' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /shift-group/{id}:
+    get:
+      tags: [Shift Group]
+      summary: Detail shift group
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    put:
+      tags: [Shift Group]
+      summary: Ubah shift group (full update)
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ShiftGroup' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    delete:
+      tags: [Shift Group]
+      summary: Hapus shift group
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      responses: { '204': { description: No Content } }
+
+  /shift-group/{id}/detail:
+    get:
+      tags: [Shift Group]
+      summary: List detail pattern rotasi untuk group
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Shift Group]
+      summary: Tambah detail (urutan hari -> shift)
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ShiftGroupDetail' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /shift-pegawai:
+    get:
+      tags: [Shift Pegawai]
+      summary: List assignment shift per pegawai
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - in: query
+          name: id_pegawai
+          schema: { type: string }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Shift Pegawai]
+      summary: Assign shift / group ke pegawai
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ShiftPegawai' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /log-raw-absensi:
+    get:
+      tags: [Log Raw Absensi]
+      summary: List log raw
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - in: query
+          name: id_pegawai
+          schema: { type: string }
+        - in: query
+          name: tanggal
+          description: Filter tanggal (YYYY-MM-DD)
+          schema: { type: string, format: date }
+        - in: query
+          name: source_absensi
+          schema: { type: string, enum: [FINGERPRINT, MOBILE_APP, QR_CODE] }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Log Raw Absensi]
+      summary: Tambah log raw
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LogRawAbsensi' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /absensi-harian:
+    get:
+      tags: [Absensi Harian]
+      summary: List absensi harian
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - in: query
+          name: id_pegawai
+          schema: { type: string }
+        - in: query
+          name: tanggal_mulai
+          schema: { type: string, format: date }
+        - in: query
+          name: tanggal_selesai
+          schema: { type: string, format: date }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Absensi Harian]
+      summary: Buat/rekonsiliasi absensi harian
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AbsensiHarian' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /kebijakan-absensi:
+    get:
+      tags: [Kebijakan Absensi]
+      summary: List kebijakan
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Kebijakan Absensi]
+      summary: Tambah kebijakan
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/KebijakanAbsensi' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /hari-libur:
+    get:
+      tags: [Hari Libur]
+      summary: List hari libur
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Hari Libur]
+      summary: Tambah hari libur
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/HariLibur' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /koreksi-absensi:
+    get:
+      tags: [Koreksi Absensi]
+      summary: List pengajuan koreksi
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Koreksi Absensi]
+      summary: Ajukan koreksi absensi
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/KoreksiAbsensi' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /proses-harian:
+    get:
+      tags: [Proses Harian]
+      summary: List proses harian (rekonsiliasi, dsb)
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Proses Harian]
+      summary: Catat proses harian
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ProsesHarian' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+
+  /lembur-bulanan:
+    get:
+      tags: [Lembur Bulanan]
+      summary: List rekap lembur bulanan
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }
+    post:
+      tags: [Lembur Bulanan]
+      summary: Tambah/rekap lembur bulanan
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LemburBulanan' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } } }

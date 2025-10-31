@@ -2,7 +2,7 @@ import { httpServer, httpPort } from "./servers/http.server.js";
 import { validateEnv } from "./validations/env.validation.js";
 import { initializeTracing } from "./configs/tracing.config.js";
 import chalk from "chalk";
-import { logger } from "./libraries/logger.library.js";
+import { logger } from "./libraries/logger.library.js"; 
 
 // ================================================================
 // STEP 1: Initialize OpenTelemetry FIRST (before any imports)
@@ -26,7 +26,7 @@ try {
     error: error.message,
   });
   process.exit(1);
-}
+} 
 
 // ================================================================
 // STEP 3: Start HTTP Server
